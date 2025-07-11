@@ -3,17 +3,17 @@
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <div class="flex h-screen">
-        <!-- Gambar (30%) - Di desktop, 100% di mobile -->
+        <!-- Gambar (30%) -->
         <div class="w-full lg:w-[30%] h-64 lg:h-full bg-center bg-cover"
             style="background-image: url('{{ asset('images/daun.jpg') }}'); background-size: cover; background-position: center;">
         </div>
 
-        <!-- Formulir Login (70%) - Di desktop, 100% di mobile -->
+        <!-- Formulir Login (70%) -->
         <div class="w-full lg:w-[70%] p-6 flex items-center justify-center"
             style="height: 100vh; background-color: #E4E8D6;">
 
             <div class="w-full max-w-md">
-                <!-- Teks Masuk di atas Form -->
+                <!-- Teks Masuk -->
                 <h3 class="text-center mb-2" style="color: #42563D; font-size: 3rem; font-weight: 600;">
                     MASUK
                 </h3>
@@ -21,7 +21,7 @@
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
 
-                    <!-- Email Address -->
+                    <!-- Email -->
                     <div class="flex flex-col items-start justify-center mt-4 w-full">
                         <x-text-input id="email" class="block mt-1 w-full placeholder-[#282323]"
                             style="background-color: #DDE1CD !important; color: #282323;" type="email" name="email"
@@ -37,6 +37,16 @@
                         <x-input-error :messages="$errors->get('password')" class="mt-2" />
                     </div>
 
+                    <!-- Role Dropdown -->
+                    <div class="flex flex-col items-start justify-center mt-6 w-full">
+                        <select name="role" required class="block w-full mt-1 rounded-md border-gray-300 shadow-sm"
+                            style="background-color: #DDE1CD !important; color: #282323;">
+                            <option value="">-- Pilih Peran --</option>
+                            <option value="admin">Admin</option>
+                            <option value="user">User</option>
+                        </select>
+                        <x-input-error :messages="$errors->get('role')" class="mt-2" />
+                    </div>
 
                     <!-- Remember Me -->
                     <div class="flex items-center justify-start mt-4">
@@ -54,7 +64,7 @@
                             Masuk
                         </x-primary-button>
 
-                        <!-- Link Belum punya akun? Daftar di bawah tombol -->
+                        <!-- Link Daftar -->
                         <div class="text-center mt-4">
                             <a class="underline text-sm text-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                 href="{{ route('register') }}">

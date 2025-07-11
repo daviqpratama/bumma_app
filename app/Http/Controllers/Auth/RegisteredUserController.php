@@ -16,7 +16,7 @@ use Illuminate\View\View;
 class RegisteredUserController extends Controller
 {
     /**
-     * Display the registration view.
+     * Tampilkan form registrasi.
      */
     public function create(): View
     {
@@ -24,28 +24,36 @@ class RegisteredUserController extends Controller
     }
 
     /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
+     * Proses registrasi user baru.
      */
     public function store(Request $request): RedirectResponse
     {
+        // Validasi input
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'in:admin,user'], // Validasi field role
         ]);
 
+        // Simpan user ke database
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $request->role, // Simpan role dari form
         ]);
 
         event(new Registered($user));
 
+        // Login otomatis setelah register
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME);
+        // Redirect berdasarkan role
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard'); // Ganti jika rute berbeda
+        } else {
+            return redirect()->route('user.dashboard'); // Ganti jika rute berbeda
+        }
     }
 }

@@ -84,55 +84,91 @@
     </style>
 </head>
 <body>
-    <div class="d-flex">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <img src="{{ asset('logo.png') }}" alt="Logo">
-            <ul class="menu">
-                <li><a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}"><span class="icon-wrapper">📊</span> Dashboard</a></li>
-                <li><a href="{{ route('saldo-awal') }}" class="{{ request()->routeIs('saldo-awal') ? 'active' : '' }}"><span class="icon-wrapper">💰</span> Saldo Awal</a></li>
-                <li><a href="{{ route('jurnal-umum') }}" class="{{ request()->routeIs('jurnal-umum') ? 'active' : '' }}"><span class="icon-wrapper">📓</span> Jurnal Umum</a></li>
-                <li><a href="{{ route('buku-besar.index') }}" class="{{ request()->routeIs('buku-besar.index') ? 'active' : '' }}"><span class="icon-wrapper">📚</span> Buku Besar</a></li>
-                <li><a href="{{ route('neraca-saldo.index') }}" class="{{ request()->routeIs('neraca-saldo.index') ? 'active' : '' }}"><span class="icon-wrapper">📄</span> Neraca Saldo</a></li>
-                <li><a href="{{ route('jurnal-penyesuaian.index') }}" class="{{ request()->routeIs('jurnal-penyesuaian.index') ? 'active' : '' }}"><span class="icon-wrapper">⚖️</span> Jurnal Penyesuaian</a></li>
-                <li><a href="{{ route('neraca-lajur.index') }}" class="{{ request()->routeIs('neraca-lajur.index') ? 'active' : '' }}"><span class="icon-wrapper">🮮</span> Neraca Lajur</a></li>
-                <li><a href="{{ route('laporan-keuangan') }}" class="{{ request()->routeIs('laporan-keuangan') ? 'active' : '' }}"><span class="icon-wrapper">📈</span> Laporan Keuangan</a></li>
-                <li><a href="{{ route('laporan.kinerja') }}" class="{{ request()->routeIs('laporan.kinerja') ? 'active' : '' }}"><span class="icon-wrapper">📋</span> Laporan Kinerja</a></li>
-            </ul>
-        </div>
-
-        <!-- Main content -->
-        <div class="d-flex flex-column w-100">
-            <div class="topbar">
-                <div class="admin-icon">
-                    <i class="bi bi-person-circle"></i> Admin
-                </div>
-            </div>
-
-            <div class="content">
-                <h4 class="mb-3">@yield('title')</h4>
-
-                @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
-                @if (session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
-                @yield('content')
-            </div>
-        </div>
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <img src="{{ asset('logo.png') }}" alt="Logo">
+        <ul class="menu">
+            <li>
+                <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <span class="icon-wrapper">📊</span> Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('saldo-awal.index') }}" class="{{ request()->routeIs('saldo-awal.index') ? 'active' : '' }}">
+                    <span class="icon-wrapper">💰</span> Saldo Awal
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('jurnal-umum.index') }}" class="{{ request()->routeIs('jurnal-umum') ? 'active' : '' }}">
+                    <span class="icon-wrapper">📓</span> Jurnal Umum
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('buku-besar.index') }}" class="{{ request()->routeIs('buku-besar.index') ? 'active' : '' }}">
+                    <span class="icon-wrapper">📚</span> Buku Besar
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('neraca-saldo.index') }}" class="{{ request()->routeIs('neraca-saldo.index') ? 'active' : '' }}">
+                    <span class="icon-wrapper">📄</span> Neraca Saldo
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('jurnal-penyesuaian.index') }}" class="{{ request()->routeIs('jurnal-penyesuaian.index') ? 'active' : '' }}">
+                    <span class="icon-wrapper">⚖️</span> Jurnal Penyesuaian
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('neraca-lajur.index') }}" class="{{ request()->routeIs('neraca-lajur.index') ? 'active' : '' }}">
+                    <span class="icon-wrapper">🮮</span> Neraca Lajur
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('laporan-keuangan') }}" class="{{ request()->routeIs('laporan-keuangan') ? 'active' : '' }}">
+                    <span class="icon-wrapper">📈</span> Laporan Keuangan
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('laporan.kinerja') }}" class="{{ request()->routeIs('laporan.kinerja') ? 'active' : '' }}">
+                    <span class="icon-wrapper">📋</span> Laporan Kinerja
+                </a>
+            </li>
+        </ul>
     </div>
 
-    <!-- JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    @stack('scripts')
+    <!-- Main content -->
+    <div class="d-flex flex-column w-100">
+        <div class="topbar">
+            <div class="admin-icon">
+                <i class="bi bi-person-circle"></i> Admin
+            </div>
+        </div>
+
+        <div class="content">
+            <h4 class="mb-3">@yield('title')</h4>
+
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @yield('content')
+        </div>
+    </div>
+</div>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+@stack('scripts')
 </body>
 </html>

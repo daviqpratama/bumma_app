@@ -1,36 +1,36 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ config('app.name', 'Laravel') }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-[#f4f5ec] font-sans antialiased">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+    <div class="flex min-h-screen">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <!-- Sidebar -->
+        <aside class="w-64 bg-[#f0f4e5] border-r">
+            @include('layouts.sidebar')
+        </aside>
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
+        <!-- Content -->
+        <div class="flex-1">
+            <!-- Topbar -->
+            <header class="bg-[#cfe3c2] h-14 flex items-center justify-between px-6 shadow">
+                <h1 class="text-lg font-bold text-gray-800">BUMMA</h1>
+                <div class="text-black">
+                    <i class="fas fa-user"></i>
+                </div>
+            </header>
 
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endif
+            <main class="p-6">
+    @yield('content')
+</main>
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
         </div>
-    </body>
+
+    </div>
+</body>
 </html>

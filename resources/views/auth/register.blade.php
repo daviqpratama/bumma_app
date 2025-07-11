@@ -52,14 +52,26 @@
                         <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                     </div>
 
+                    <!-- Role -->
+                    <div class="flex flex-col items-start justify-center mt-6 w-full">
+                        <label for="role" class="block font-medium text-sm text-gray-700">Peran</label>
+                        <select name="role" id="role" required
+                            class="block mt-1 w-full rounded-md border-gray-300 shadow-sm"
+                            style="background-color: #DDE1CD !important; color: #282323;">
+                            <option value="">-- Pilih Peran --</option>
+                            <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
+                            <option value="user" {{ old('role') === 'user' ? 'selected' : '' }}>User</option>
+                        </select>
+                        <x-input-error :messages="$errors->get('role')" class="mt-2" />
+                    </div>
+
+                    <!-- Tombol -->
                     <div class="flex flex-col items-center justify-center mt-6">
-                        <!-- Tombol Register -->
                         <x-primary-button class="ml-1"
                             style="background-color: #637A30; width: 100%; height: 48px; color: white; text-align: center; display: flex; justify-content: center; align-items: center;">
                             Daftar
                         </x-primary-button>
 
-                        <!-- Link ke Login -->
                         <div class="text-center mt-4">
                             <a class="underline text-sm text-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                 href="{{ route('login') }}">

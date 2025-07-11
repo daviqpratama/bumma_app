@@ -2,19 +2,25 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class JurnalUmum extends Model
 {
-    protected $table = 'jurnal_umum'; // pastikan sesuai nama tabel di database
+    use HasFactory;
 
     protected $fillable = [
         'tanggal',
-        'akun1',
-        'debit1',
-        'akun2',
-        'kredit2',
+        'kode_jurnal',
         'keterangan',
-        'kode_jurnal'
+        'akun_id',
+        'posisi',
+        'nominal',
+        'ref',
     ];
+
+    public function akun()
+    {
+        return $this->belongsTo(Akun::class);
+    }
 }
