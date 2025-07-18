@@ -23,7 +23,13 @@
                         <td>{{ \Carbon\Carbon::parse($jurnal->tanggal)->format('d-m-Y') }}</td>
                         <td>{{ $jurnal->kode_jurnal }}</td>
                         <td>{{ $jurnal->akun->nama ?? '-' }}</td>
-                        <td>{{ $jurnal->keterangan }}</td>
+                        <td>
+                            @if ($jurnal->ref == 'Saldo Awal')
+                                Saldo Awal
+                            @else
+                                {{ $jurnal->keterangan }}
+                            @endif
+                        </td>
                         <td>{{ ucfirst($jurnal->posisi) }}</td>
                         <td>Rp{{ number_format($jurnal->nominal, 2, ',', '.') }}</td>
                         <td>{{ $jurnal->ref }}</td>

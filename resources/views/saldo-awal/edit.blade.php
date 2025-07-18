@@ -11,15 +11,23 @@
         @method('PUT')
 
         <div class="mb-3">
-            <label for="akun">Nama Akun</label>
-            <input type="text" name="akun" class="form-control"
-                value="{{ old('akun', $editItem->akun) }}" required>
+            <label for="akuns_id">Nama Akun</label>
+            <select name="akuns_id" id="akuns_id" class="form-control" required>
+                <option value="">-- Pilih Akun --</option>
+                @foreach ($akuns as $akun)
+                    <option value="{{ $akun->id }}" {{ $akun->id == $editItem->akuns_id ? 'selected' : '' }}>
+                        {{ $akun->kode }} - {{ $akun->nama }}
+                    </option>
+                @endforeach
+            </select>
         </div>
+
         <div class="mb-3">
             <label for="debit">Debit</label>
             <input type="number" name="debit" class="form-control" step="0.01"
                 value="{{ old('debit', $editItem->debit) }}">
         </div>
+
         <div class="mb-3">
             <label for="kredit">Kredit</label>
             <input type="number" name="kredit" class="form-control" step="0.01"

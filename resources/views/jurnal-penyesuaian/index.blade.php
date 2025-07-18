@@ -31,11 +31,23 @@
                 @forelse ($jurnals as $jurnal)
                     <tr>
                         <td>{{ \Carbon\Carbon::parse($jurnal->tanggal)->format('d M Y') }}</td>
-                        <td>{{ $jurnal->nomor_jurnal }}</td>
-                        <td>{{ $jurnal->akun }}</td>
-                        <td>{{ $jurnal->deskripsi }}</td>
-                        <td>Rp {{ number_format($jurnal->debit, 0, ',', '.') }}</td>
-                        <td>Rp {{ number_format($jurnal->kredit, 0, ',', '.') }}</td>
+                        <td>{{ $jurnal->kode_jurnal }}</td>
+                        <td>{{ $jurnal->akun->nama ?? '-' }}</td>
+                        <td>{{ $jurnal->keterangan }}</td>
+                        <td>
+                            @if ($jurnal->posisi === 'debit')
+                                Rp {{ number_format($jurnal->nominal, 0, ',', '.') }}
+                            @else
+                                -
+                            @endif
+                        </td>
+                        <td>
+                            @if ($jurnal->posisi === 'kredit')
+                                Rp {{ number_format($jurnal->nominal, 0, ',', '.') }}
+                            @else
+                                -
+                            @endif
+                        </td>
                     </tr>
                 @empty
                     <tr>
@@ -43,6 +55,7 @@
                     </tr>
                 @endforelse
             </tbody>
+
         </table>
 
         <div class="mt-3 text-end fw-semibold">

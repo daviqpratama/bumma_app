@@ -14,8 +14,8 @@
         {{-- Tombol Tambah --}}
         <a href="{{ route('transaksi.create') }}" class="btn btn-primary" style="margin-bottom: 1em;">+ Tambah Transaksi</a>
 
-        <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; border-collapse: collapse;">
-            <thead>
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
                 <tr style="background-color: #f0f0f0;">
                     <th>Tanggal</th>
                     <th>Keterangan</th>

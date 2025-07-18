@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
 <div class="container">
@@ -8,18 +8,23 @@
         @csrf
 
         <div class="mb-3">
-            <label for="akun">Nama Akun</label>
-            <input type="text" name="akun" id="akun" class="form-control" required>
+            <label for="akuns_id">Nama Akun</label>
+            <select name="akuns_id" id="akuns_id" class="form-control" required>
+                <option value="">-- Pilih Akun --</option>
+                @foreach ($akuns as $akun)
+                    <option value="{{ $akun->id }}">{{ $akun->kode }} - {{ $akun->nama }}</option>
+                @endforeach
+            </select>
         </div>
 
         <div class="mb-3">
             <label for="debit">Debit</label>
-            <input type="number" name="debit" id="debit" class="form-control">
+            <input type="number" name="debit" id="debit" class="form-control" step="0.01">
         </div>
 
         <div class="mb-3">
             <label for="kredit">Kredit</label>
-            <input type="number" name="kredit" id="kredit" class="form-control">
+            <input type="number" name="kredit" id="kredit" class="form-control" step="0.01">
         </div>
 
         <button type="submit" class="btn btn-primary">Simpan</button>

@@ -8,5 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class SaldoAwal extends Model
 {
     use HasFactory;
-    protected $fillable = ['akun_id', 'akun', 'debit', 'kredit'];
+
+    protected $fillable = ['akuns_id', 'debit', 'kredit'];
+
+    public function akun()
+    {
+        return $this->belongsTo(Akun::class, 'akuns_id');
+    }
 }

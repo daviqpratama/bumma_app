@@ -105,11 +105,10 @@
                 </a>
             </li>
             <li>
-    <a href="{{ route('transaksi.index') }}" class="{{ request()->routeIs('transaksi.*') ? 'active' : '' }}">
-        <span class="icon-wrapper">💳</span> Transaksi
-    </a>
-</li>
-
+                <a href="{{ route('transaksi.index') }}" class="{{ request()->routeIs('transaksi.*') ? 'active' : '' }}">
+                    <span class="icon-wrapper">💳</span> Transaksi
+                </a>
+            </li>
             <li>
                 <a href="{{ route('buku-besar.index') }}" class="{{ request()->routeIs('buku-besar.index') ? 'active' : '' }}">
                     <span class="icon-wrapper">📚</span> Buku Besar
@@ -139,6 +138,14 @@
                 <a href="{{ route('laporan.kinerja') }}" class="{{ request()->routeIs('laporan.kinerja') ? 'active' : '' }}">
                     <span class="icon-wrapper">📋</span> Laporan Kinerja
                 </a>
+            </li>
+            <li>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn w-100 text-start d-flex align-items-center" style="background: none; border: none; padding: 8px 10px; color: #3d3d3d; font-weight: 500; border-radius: 8px; transition: 0.2s;">
+                        <span class="icon-wrapper">🚪</span> Logout
+                    </button>
+                </form>
             </li>
         </ul>
     </div>

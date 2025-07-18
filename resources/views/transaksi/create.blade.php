@@ -21,8 +21,8 @@
                 </div>
             @endif
 
-            {{-- Jika belum ada akun --}}
-            @if ($akuns->isEmpty())
+            {{-- Jika akun kosong --}}
+            @if ($akunDebit->isEmpty() || $akunKredit->isEmpty())
                 <div class="alert alert-warning">Belum ada data akun. Silakan tambahkan akun terlebih dahulu.</div>
             @endif
 
@@ -44,7 +44,7 @@
                     <label for="akun_debit" class="form-label">Akun Debit</label>
                     <select name="akun_debit" class="form-select" required>
                         <option value="">-- Pilih Akun Debit --</option>
-                        @foreach ($akuns as $akun)
+                        @foreach ($akunDebit as $akun)
                             <option value="{{ $akun->id }}" {{ old('akun_debit') == $akun->id ? 'selected' : '' }}>
                                 {{ $akun->kode }} - {{ $akun->nama }}
                             </option>
@@ -61,7 +61,7 @@
                     <label for="akun_kredit" class="form-label">Akun Kredit</label>
                     <select name="akun_kredit" class="form-select" required>
                         <option value="">-- Pilih Akun Kredit --</option>
-                        @foreach ($akuns as $akun)
+                        @foreach ($akunKredit as $akun)
                             <option value="{{ $akun->id }}" {{ old('akun_kredit') == $akun->id ? 'selected' : '' }}>
                                 {{ $akun->kode }} - {{ $akun->nama }}
                             </option>

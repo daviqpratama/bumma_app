@@ -87,7 +87,8 @@
                         </x-nav-link>
                     </div>
 
-                    <!-- Dropdown Pengaturan untuk profil dan keluar -->
+
+                    <!-- Dropdown Pengaturan untuk hanya keluar -->
                     <div class="hidden sm:flex sm:items-center sm:ml-6">
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">
@@ -104,11 +105,7 @@
                             </x-slot>
 
                             <x-slot name="content">
-                                <x-dropdown-link :href="route('profile.edit')" class="text-[#42563D]">
-                                    {{ __('Profile') }}
-                                </x-dropdown-link>
-
-                                <!-- Form untuk keluar (logout) -->
+                                <!-- Form untuk keluar (logout) saja -->
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();" class="text-[#42563D]">
@@ -118,6 +115,7 @@
                             </x-slot>
                         </x-dropdown>
                     </div>
+
 
                     <!-- Menu Hamburger untuk tampilan mobile -->
                     <div class="-mr-2 flex items-center sm:hidden">

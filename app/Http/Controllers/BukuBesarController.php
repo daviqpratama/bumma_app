@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Transaksi;
+use App\Models\BukuBesar;
 use App\Models\Akun;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -13,7 +13,7 @@ class BukuBesarController extends Controller
     {
         $daftarAkun = Akun::orderBy('kode')->get();
 
-        $transaksis = Transaksi::query();
+        $transaksis = BukuBesar::with('akun');
 
         if ($request->filled('akun_id')) {
             $transaksis->where('akun_id', $request->akun_id);
@@ -33,7 +33,7 @@ class BukuBesarController extends Controller
 
     public function exportPdf(Request $request)
     {
-        $transaksis = Transaksi::query();
+        $transaksis = BukuBesar::with('akun');
 
         if ($request->filled('akun_id')) {
             $transaksis->where('akun_id', $request->akun_id);
@@ -58,7 +58,7 @@ class BukuBesarController extends Controller
 
     public function exportExcel(Request $request)
     {
-        $transaksis = Transaksi::query();
+        $transaksis = BukuBesar::with('akun');
 
         if ($request->filled('akun_id')) {
             $transaksis->where('akun_id', $request->akun_id);
@@ -78,7 +78,6 @@ class BukuBesarController extends Controller
         }
 
         $content = view('buku-besar.excel', compact('transaksis'))->render();
-
 
         return response($content)
             ->header('Content-Type', 'application/vnd.ms-excel')

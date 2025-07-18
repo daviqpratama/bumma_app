@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Akun;
 
 class JurnalUmum extends Model
 {
@@ -21,6 +22,6 @@ class JurnalUmum extends Model
 
     public function akun()
     {
-        return $this->belongsTo(Akun::class);
+        return $this->belongsTo(Akun::class, 'akun_id', 'id');
     }
 }

@@ -9,13 +9,6 @@
             <h1 class="text-3xl font-bold mb-2">Selamat Datang Admin {{ auth()->user()->name }}</h1>
             <p class="text-gray-600">Kelola data keuangan dan laporan BUMMA dengan efisien</p>
         </div>
-        <!-- Tombol Logout -->
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="btn btn-outline-danger">
-                <i class="bi bi-box-arrow-right"></i> Logout
-            </button>
-        </form>
     </div>
 
     <!-- Statistik -->

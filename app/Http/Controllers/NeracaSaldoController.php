@@ -12,7 +12,6 @@ class NeracaSaldoController extends Controller
     public function index(Request $request)
     {
         $tanggal = $request->input('tanggal', now()->toDateString());
-
         $akuns = Akun::all();
 
         $data = [
@@ -28,14 +27,14 @@ class NeracaSaldoController extends Controller
         ];
 
         foreach ($akuns as $akun) {
-            // Ambil saldo awal
+            // Ambil saldo awal dari tabel saldo_awals
             $saldoAwalData = DB::table('saldo_awals')
-                ->where('akun_id', $akun->id)
+                ->where('akuns_id', $akun->id)
                 ->first();
 
             $saldo_awal = ($saldoAwalData->debit ?? 0) - ($saldoAwalData->kredit ?? 0);
 
-            // Ambil transaksi dari jurnal umum
+            // Ambil transaksi dari jurnal umum sampai tanggal tertentu
             $transaksi = JurnalUmum::where('akun_id', $akun->id)
                 ->whereDate('tanggal', '<=', $tanggal)
                 ->get();
@@ -43,12 +42,10 @@ class NeracaSaldoController extends Controller
             $total_debit = $transaksi->where('posisi', 'debit')->sum('nominal');
             $total_kredit = $transaksi->where('posisi', 'kredit')->sum('nominal');
 
-            // Hitung transaksi keuangan
-            if ($akun->jenis === 'Aset') {
-                $transaksi_keuangan = $total_debit - $total_kredit;
-            } else {
-                $transaksi_keuangan = $total_kredit - $total_debit;
-            }
+            // Hitung transaksi dan saldo akhir
+            $transaksi_keuangan = $akun->jenis === 'Aset'
+                ? $total_debit - $total_kredit
+                : $total_kredit - $total_debit;
 
             $saldo_akhir = $saldo_awal + $transaksi_keuangan;
 

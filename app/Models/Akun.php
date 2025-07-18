@@ -15,4 +15,9 @@ class Akun extends Model
     {
         return $this->hasMany(Transaksi::class);
     }
+
+    public function saldoAwals()
+    {
+        return $this->hasMany(SaldoAwal::class, 'akuns_id');
+    }
 }

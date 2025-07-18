@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class NeracaSaldo extends Model
 {
     use HasFactory;
+
+    protected $table = 'neraca_saldo';
+    protected $guarded = [];
 }

@@ -19,8 +19,10 @@ class TransaksiController extends Controller
 
     public function create()
     {
-        $akuns = Akun::all();
-        return view('transaksi.create', compact('akuns'));
+        $akunDebit = Akun::where('jenis', 'Aset')->get();
+        $akunKredit = Akun::whereIn('jenis', ['Kewajiban', 'Ekuitas', 'Pendapatan'])->get();
+
+        return view('transaksi.create', compact('akunDebit', 'akunKredit'));
     }
 
     public function store(Request $request)
@@ -35,11 +37,13 @@ class TransaksiController extends Controller
         ]);
 
         if ($validator->fails()) {
-            $akuns = Akun::all();
+            $akunDebit = Akun::where('jenis', 'Aset')->get();
+            $akunKredit = Akun::whereIn('jenis', ['Kewajiban', 'Ekuitas', 'Pendapatan'])->get();
+
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput()
-                ->with(compact('akuns'));
+                ->with(compact('akunDebit', 'akunKredit'));
         }
 
         $akunDebit = Akun::findOrFail($request->akun_debit);
@@ -56,28 +60,28 @@ class TransaksiController extends Controller
 
         $kodeJurnal = 'TRX' . str_pad($transaksi->id, 4, '0', STR_PAD_LEFT);
 
-        // Jurnal Umum
+        $ref = 'Transaksi';
+
         JurnalUmum::create([
             'tanggal' => $request->tanggal,
             'kode_jurnal' => $kodeJurnal,
             'keterangan' => $request->keterangan,
-            'akun' => $akunDebit->nama,
-            'debit' => $request->nominal_debit,
-            'kredit' => 0,
-            'ref' => null,
+            'akun_id' => $akunDebit->id,
+            'posisi' => 'debit',
+            'nominal' => $request->nominal_debit,
+            'ref' => $ref,
         ]);
 
         JurnalUmum::create([
             'tanggal' => $request->tanggal,
             'kode_jurnal' => $kodeJurnal,
             'keterangan' => $request->keterangan,
-            'akun' => $akunKredit->nama,
-            'debit' => 0,
-            'kredit' => $request->nominal_kredit,
-            'ref' => null,
+            'akun_id' => $akunKredit->id,
+            'posisi' => 'kredit',
+            'nominal' => $request->nominal_kredit,
+            'ref' => $ref,
         ]);
 
-        // Buku Besar
         BukuBesar::create([
             'akun_id' => $akunDebit->id,
             'tanggal' => $request->tanggal,
