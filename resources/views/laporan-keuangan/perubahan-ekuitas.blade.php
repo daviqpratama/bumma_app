@@ -1,85 +1,46 @@
 @extends('layouts.admin')
 
-@section('title', 'Laporan Perubahan Ekuitas')
-
 @section('content')
-<style>
-    .report-header {
-        background-color: #c9e6c1;
-        text-align: center;
-        font-weight: bold;
-        padding: 10px;
-        border: 1px solid #000;
-    }
+<div class="container mt-5">
+    <h2 class="text-lg font-bold mb-4">Laporan Perubahan Ekuitas - {{ $data['tahun'] }}</h2>
 
-    .report-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        border: 1px solid black;
-    }
-
-    .report-table th,
-    .report-table td {
-        border: 1px solid black;
-        padding: 6px 10px;
-        font-size: 14px;
-    }
-
-    .text-bold {
-        font-weight: bold;
-    }
-
-    .text-right {
-        text-align: right;
-    }
-
-    .bg-green {
-        background-color: #e5f3dd;
-    }
-</style>
-
-<div class="report-header">
-    BUMMA <br>
-    LAPORAN PERUBAHAN EKUITAS <br>
-    PERIODE 2025
+    <table class="table table-bordered">
+        <tr>
+            <th>Keterangan</th>
+            <th class="text-end">Jumlah (Rp)</th>
+        </tr>
+        <tr>
+            <td>Modal Awal</td>
+            <td class="text-end">{{ number_format($data['modal_awal'], 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td>+ SHU Tahun Berjalan</td>
+            <td class="text-end">{{ number_format($data['shu'], 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td>+ Dana Komunitas</td>
+            <td class="text-end">{{ number_format($data['dana_komunitas'], 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td>+ Penambahan Aset Tetap</td>
+            <td class="text-end">{{ number_format($data['aset_tetap'], 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td>- Distribusi Masyarakat</td>
+            <td class="text-end">{{ number_format($data['distribusi_masyarakat'], 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td>- Biaya Ritual & Ekosistem</td>
+            <td class="text-end">{{ number_format($data['biaya_ritual'], 0, ',', '.') }}</td>
+        </tr>
+        <tr class="fw-bold">
+            <td>Perubahan Ekuitas</td>
+            <td class="text-end">{{ number_format($data['perubahan'], 0, ',', '.') }}</td>
+        </tr>
+        <tr class="fw-bold">
+            <td>Modal Akhir</td>
+            <td class="text-end">{{ number_format($data['modal_akhir'], 0, ',', '.') }}</td>
+        </tr>
+    </table>
 </div>
-
-<table class="report-table mt-4">
-    <tr>
-        <td class="text-bold">Modal Awal Periode</td>
-        <td class="text-right">Rp -</td>
-    </tr>
-    <tr>
-        <td colspan="2" class="text-bold">Perubahan Selama Periode :</td>
-    </tr>
-    <tr>
-        <td>&nbsp;&nbsp;&nbsp;Laba/Rugi</td>
-        <td class="text-right">Rp -</td>
-    </tr>
-    <tr>
-        <td>&nbsp;&nbsp;&nbsp;Penambahan Dana Komunitas</td>
-        <td class="text-right">Rp -</td>
-    </tr>
-    <tr>
-        <td>&nbsp;&nbsp;&nbsp;Penambahan/Pengurangan Aset Tetap</td>
-        <td class="text-right">Rp -</td>
-    </tr>
-    <tr>
-        <td>&nbsp;&nbsp;&nbsp;Distribusi Hasil Usaha kepada Masyarakat</td>
-        <td class="text-right">Rp -</td>
-    </tr>
-    <tr>
-        <td>&nbsp;&nbsp;&nbsp;Biaya Ritual & Dampak Terhadap Ekosistem</td>
-        <td class="text-right">Rp -</td>
-    </tr>
-    <tr class="text-bold">
-        <td>Kenaikan/Penurunan Akibat Perubahan Selama Periode</td>
-        <td class="text-right">Rp -</td>
-    </tr>
-    <tr class="text-bold">
-        <td>Modal Akhir Periode</td>
-        <td class="text-right">Rp -</td>
-    </tr>
-</table>
 @endsection

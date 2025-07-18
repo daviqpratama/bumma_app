@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Akun;
+use App\Models\JurnalUmum;
 
 class LaporanKeuanganController extends Controller
 {
@@ -12,45 +13,135 @@ class LaporanKeuanganController extends Controller
         return view('laporan-keuangan.index');
     }
 
+    public function sisaHasilUsaha()
+    {
+        $tahun = date('Y');
+
+        // Pendapatan
+        $pendapatanAkuns = Akun::where('jenis', 'Pendapatan')->get();
+        $totalPendapatan = 0;
+        foreach ($pendapatanAkuns as $akun) {
+            $akun->jumlah = JurnalUmum::where('akun_id', $akun->id)
+                ->where('posisi', 'kredit')
+                ->whereYear('tanggal', $tahun)
+                ->whereIn('ref', ['Transaksi', 'Penyesuaian'])
+                ->sum('nominal');
+            $totalPendapatan += $akun->jumlah;
+        }
+
+        // Beban
+        $bebanAkuns = Akun::where('jenis', 'Beban')->get();
+        $totalBeban = 0;
+        foreach ($bebanAkuns as $akun) {
+            $akun->jumlah = JurnalUmum::where('akun_id', $akun->id)
+                ->where('posisi', 'debit')
+                ->whereYear('tanggal', $tahun)
+                ->whereIn('ref', ['Transaksi', 'Penyesuaian'])
+                ->sum('nominal');
+            $totalBeban += $akun->jumlah;
+        }
+
+        $labaSebelumPajak = $totalPendapatan - $totalBeban;
+
+        return view('laporan-keuangan.sisa-hasil-usaha', compact(
+            'tahun',
+            'pendapatanAkuns',
+            'bebanAkuns',
+            'totalPendapatan',
+            'totalBeban',
+            'labaSebelumPajak'
+        ));
+    }
+
     public function posisiKeuangan()
     {
-        // Ambil data akun dari database
-        $data = Akun::select('nama_akun', 'tipe', 'kelompok', 'saldo')->get();
-
-        // Kelompokkan berdasarkan tipe
+        $data = Akun::select('nama', 'tipe', 'kelompok', 'saldo')->get();
         $aktiva = $data->where('tipe', 'Aktiva')->groupBy('kelompok');
         $pasiva = $data->where('tipe', 'Pasiva')->groupBy('kelompok');
 
-        // Kirim ke view
         return view('laporan-keuangan.posisi-keuangan', compact('aktiva', 'pasiva'));
     }
+
     public function perubahanEkuitas()
-{
-    $data = [
-        'modal_awal' => 0,
-        'laba_rugi' => 0,
-        'dana_komunitas' => 0,
-        'aset_tetap' => 0,
-        'distribusi_masyarakat' => 0,
-        'biaya_ritual' => 0,
+    {
+        $tahun = request('tahun') ?? date('Y');
+
+        // Modal awal dari akun jenis Ekuitas
+        $modalAwal = Akun::where('jenis', 'Ekuitas')->with('saldoAwals')->get()->sum(function ($akun) use ($tahun) {
+            return $akun->saldoAwals->where('created_at', 'like', $tahun . '%')->sum(function ($s) {
+                return ($s->debit ?? 0) - ($s->kredit ?? 0);
+            });
+        });
+
+        // Pendapatan
+        $pendapatan = JurnalUmum::whereHas('akun', function ($query) {
+            $query->where('jenis', 'Pendapatan');
+        })
+            ->whereYear('tanggal', $tahun)
+            ->where('posisi', 'kredit')
+            ->whereIn('ref', ['Transaksi', 'Penyesuaian'])
+            ->sum('nominal');
+
+        // Beban
+        $beban = JurnalUmum::whereHas('akun', function ($query) {
+            $query->where('jenis', 'Beban');
+        })
+            ->whereYear('tanggal', $tahun)
+            ->where('posisi', 'debit')
+            ->whereIn('ref', ['Transaksi', 'Penyesuaian'])
+            ->sum('nominal');
+
+        $labaRugi = $pendapatan - $beban;
+
+        // Dana Komunitas (akun kode: 311)
+        $danaKomunitas = JurnalUmum::whereHas('akun', function ($query) {
+            $query->where('kode', '311');
+        })
+            ->whereYear('tanggal', $tahun)
+            ->sum('nominal');
+
+        // Aset Tetap (akun kode: 112)
+        $asetTetap = JurnalUmum::whereHas('akun', function ($query) {
+            $query->where('kode', '112');
+        })
+            ->whereYear('tanggal', $tahun)
+            ->sum('nominal');
+
+        // Distribusi ke Masyarakat (akun kode: 511)
+        $distribusi = JurnalUmum::whereHas('akun', function ($query) {
+            $query->where('kode', '511');
+        })
+            ->whereYear('tanggal', $tahun)
+            ->sum('nominal');
+
+        // Biaya Ritual dan Ekosistem (akun kode: 611)
+        $biayaRitual = JurnalUmum::whereHas('akun', function ($query) {
+            $query->where('kode', '611');
+        })
+            ->whereYear('tanggal', $tahun)
+            ->sum('nominal');
+
+        $perubahan = $labaRugi + $danaKomunitas + $asetTetap - $distribusi - $biayaRitual;
+        $modalAkhir = $modalAwal + $perubahan;
+
+        $data = [
+        'modal_awal' => $modalAwal,
+        'shu' => $labaRugi, // ganti key dari 'laba_rugi' jadi 'shu' agar konsisten dengan view
+        'dana_komunitas' => $danaKomunitas,
+        'aset_tetap' => $asetTetap,
+        'distribusi_masyarakat' => $distribusi,
+        'biaya_ritual' => $biayaRitual,
+        'perubahan' => $perubahan,
+        'modal_akhir' => $modalAkhir,
+        'tahun' => $tahun, // ⬅️ tambahkan ini biar bisa diakses dari $data['tahun']
     ];
 
-    $data['perubahan'] = 
-        $data['laba_rugi'] + 
-        $data['dana_komunitas'] + 
-        $data['aset_tetap'] -
-        $data['distribusi_masyarakat'] -
-        $data['biaya_ritual'];
-
-    $data['modal_akhir'] = $data['modal_awal'] + $data['perubahan'];
-
     return view('laporan-keuangan.perubahan-ekuitas', compact('data'));
-}
 
-public function arusKas()
-{
-    // Dummy data sementara (nanti bisa ambil dari model Transaksi, dll)
-    return view('laporan-keuangan.arus-kas');
-}
+    }
 
+    public function arusKas()
+    {
+        return view('laporan-keuangan.arus-kas');
+    }
 }

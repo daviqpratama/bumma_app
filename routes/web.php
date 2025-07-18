@@ -71,7 +71,7 @@ Route::middleware(['auth'])->group(function () {
 
         // ✅ Laporan Keuangan
         Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index'])->name('laporan-keuangan');
-        Route::get('/laporan-keuangan/sisa-hasil-usaha', fn () => view('laporan-keuangan.sisa-hasil-usaha'))->name('laporan-keuangan.sisa-hasil-usaha');
+        Route::get('/laporan-keuangan/sisa-hasil-usaha', [LaporanKeuanganController::class, 'sisaHasilUsaha'])->name('laporan-keuangan.sisa-hasil-usaha');
         Route::get('/laporan-keuangan/posisi-keuangan', [LaporanKeuanganController::class, 'posisiKeuangan'])->name('laporan-keuangan.posisi-keuangan');
         Route::get('/laporan-keuangan/perubahan-ekuitas', [LaporanKeuanganController::class, 'perubahanEkuitas'])->name('laporan-keuangan.perubahan-ekuitas');
         Route::get('/laporan-keuangan/arus-kas', [LaporanKeuanganController::class, 'arusKas'])->name('laporan-keuangan.arus-kas');

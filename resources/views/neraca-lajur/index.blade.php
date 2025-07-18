@@ -9,23 +9,28 @@
     </div>
 
     <!-- Filter -->
-    <div class="row g-2 mb-3">
-        <div class="col-md-3">
-            <input type="date" class="form-control" placeholder="mm/dd/yyyy">
+    <form method="GET" action="{{ route('neraca-lajur.index') }}">
+        <div class="row g-2 mb-3">
+            <div class="col-md-3">
+                <input type="date" name="tanggal" class="form-control" value="{{ request('tanggal') }}">
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="nama_akun" class="form-control" placeholder="Nama Akun" value="{{ request('nama_akun') }}">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-success w-100" style="background-color: #6c8b63;">Cari Akun</button>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ route('neraca-lajur.index') }}" class="btn btn-outline-danger w-100">Reset Filter</a>
+            </div>
+            <div class="col-md-1">
+                <button class="btn btn-outline-secondary w-100" type="button">PDF</button>
+            </div>
+            <div class="col-md-1">
+                <button class="btn btn-outline-success w-100" type="button">Excel</button>
+            </div>
         </div>
-        <div class="col-md-3">
-            <input type="text" class="form-control" placeholder="Nomor Akun">
-        </div>
-        <div class="col-md-2">
-            <button class="btn btn-success w-100" style="background-color: #6c8b63;">Cari Akun</button>
-        </div>
-        <div class="col-md-2">
-            <button class="btn btn-outline-secondary w-100">Ekspor PDF</button>
-        </div>
-        <div class="col-md-2">
-            <button class="btn btn-outline-success w-100">Ekspor Excel</button>
-        </div>
-    </div>
+    </form>
 
     <!-- Table -->
     <div class="table-responsive">
