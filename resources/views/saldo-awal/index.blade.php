@@ -17,8 +17,18 @@
         <form action="{{ route('saldo-awal.index') }}" method="GET" class="d-flex">
             <input type="text" name="search" class="form-control" placeholder="🔍 Cari akun..." value="{{ request('search') }}">
             <button type="submit" class="btn btn-outline-secondary ms-2">Search</button>
+            @if(request('search'))
+                <a href="{{ route('saldo-awal.index') }}" class="btn btn-outline-danger ms-2">Reset</a>
+            @endif
         </form>
     </div>
+
+    <!-- Pemberitahuan jika sedang melakukan pencarian -->
+    @if (request('search'))
+        <div class="alert alert-info">
+            Menampilkan hasil pencarian untuk: <strong>{{ request('search') }}</strong>
+        </div>
+    @endif
 
     <!-- FORM: Tambah (Collapse) atau Edit -->
     @if (isset($editItem))

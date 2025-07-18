@@ -8,7 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class SaldoAwal extends Model
 {
     use HasFactory;
-
-    // ✅ Izinkan mass assignment pada field-field ini
-    protected $fillable = ['akun', 'debit', 'kredit'];
+    protected $fillable = ['akun_id', 'akun', 'debit', 'kredit'];
 }

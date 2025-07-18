@@ -1,157 +1,59 @@
-@extends('layouts.admin') {{-- Layout sudah benar --}}
+@extends('layouts.admin')
 
 @section('title', 'Jurnal Penyesuaian')
 
 @section('content')
-<style>
-    body {
-        background-color: #f1f5ec;
-        font-family: 'Segoe UI', sans-serif;
-        font-size: 13px;
-    }
+<div class="container">
 
-    h3 {
-        font-size: 20px;
-        font-weight: bold;
-        margin-bottom: 20px;
-    }
+    <h3 class="mb-3">Jurnal Penyesuaian</h3>
 
-    .filter-bar {
-        background-color: #e5f0da;
-        border-radius: 10px;
-        padding: 15px;
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        margin-bottom: 20px;
-        box-shadow: 0px 2px 4px rgba(0,0,0,0.1);
-    }
+    <form method="GET" action="{{ route('jurnal-penyesuaian.index') }}" class="d-flex gap-2 flex-wrap align-items-center mb-4">
+        <input type="date" name="tanggal" class="form-control" value="{{ request('tanggal') }}" style="max-width: 180px;">
+        <input type="text" name="nomor_jurnal" class="form-control" placeholder="Nomor Jurnal" value="{{ request('nomor_jurnal') }}" style="max-width: 180px;">
+        <button type="submit" class="btn btn-success">Cari Jurnal</button>
+        <a href="{{ route('jurnal-penyesuaian.export.pdf') }}" class="btn btn-outline-danger">Ekspor PDF</a>
+        <a href="{{ route('jurnal-penyesuaian.export.excel') }}" class="btn btn-outline-success">Ekspor Excel</a>
+    </form>
 
-    .filter-bar input[type="date"],
-    .filter-bar input[type="text"] {
-        border: none;
-        padding: 6px 10px;
-        border-radius: 6px;
-        width: 160px;
-        background-color: #ffffff;
-        font-size: 13px;
-        border: 1px solid #c3cfc0;
-    }
-
-    .filter-bar button,
-    .filter-bar a {
-        background-color: #4f7f4f;
-        color: white;
-        padding: 7px 14px;
-        border: none;
-        border-radius: 6px;
-        font-size: 13px;
-        text-decoration: none;
-        transition: background 0.3s;
-    }
-
-    .filter-bar a {
-        background-color: #c7dbc2;
-        color: #000;
-    }
-
-    .filter-bar button:hover {
-        background-color: #3a653a;
-    }
-
-    .table-wrapper {
-        background-color: #fff;
-        border-radius: 12px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        padding: 10px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 10px;
-    }
-
-    th, td {
-        padding: 10px 8px;
-        font-size: 13px;
-        border-bottom: 1px solid #eee;
-    }
-
-    th {
-        background-color: #f5f5f5;
-        font-weight: bold;
-        text-align: left;
-    }
-
-    .summary {
-        text-align: right;
-        font-weight: 500;
-        padding: 10px 5px;
-        font-size: 13px;
-    }
-
-    .note-box {
-        background-color: #a6c89c;
-        padding: 10px 15px;
-        color: #0f2e0f;
-        font-size: 13px;
-        border-radius: 6px;
-        margin-top: 10px;
-    }
-
-    .text-center {
-        text-align: center;
-    }
-</style>
-
-<h3>Jurnal Penyesuaian</h3>
-
-<form method="GET" action="{{ route('jurnal-penyesuaian.index') }}" class="filter-bar">
-    <input type="date" name="tanggal" value="{{ request('tanggal') }}">
-    <input type="text" name="nomor_jurnal" placeholder="Nomor Jurnal" value="{{ request('nomor_jurnal') }}">
-    <button type="submit">Cari Jurnal</button>
-    <a href="{{ route('jurnal-penyesuaian.export.pdf') }}">Ekspor PDF</a>
-    <a href="{{ route('jurnal-penyesuaian.export.excel') }}">Ekspor Excel</a>
-</form>
-
-<div class="table-wrapper">
-    <table>
-        <thead>
-            <tr>
-                <th>Tanggal</th>
-                <th>Nomor Jurnal</th>
-                <th>Akun</th>
-                <th>Deskripsi</th>
-                <th>Debit</th>
-                <th>Kredit</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($jurnals as $jurnal)
+    <div class="card p-3">
+        <table class="table table-bordered">
+            <thead class="table-light">
                 <tr>
-                    <td>{{ \Carbon\Carbon::parse($jurnal->tanggal)->format('d M Y') }}</td>
-                    <td>{{ $jurnal->nomor_jurnal }}</td>
-                    <td>{{ $jurnal->akun }}</td>
-                    <td>{{ $jurnal->deskripsi }}</td>
-                    <td>{{ number_format($jurnal->debit, 0, ',', '.') }}</td>
-                    <td>{{ number_format($jurnal->kredit, 0, ',', '.') }}</td>
+                    <th>Tanggal</th>
+                    <th>Nomor Jurnal</th>
+                    <th>Akun</th>
+                    <th>Deskripsi</th>
+                    <th>Debit</th>
+                    <th>Kredit</th>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="6" class="text-center">Tidak ada data jurnal penyesuaian ditemukan.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @forelse ($jurnals as $jurnal)
+                    <tr>
+                        <td>{{ \Carbon\Carbon::parse($jurnal->tanggal)->format('d M Y') }}</td>
+                        <td>{{ $jurnal->nomor_jurnal }}</td>
+                        <td>{{ $jurnal->akun }}</td>
+                        <td>{{ $jurnal->deskripsi }}</td>
+                        <td>Rp {{ number_format($jurnal->debit, 0, ',', '.') }}</td>
+                        <td>Rp {{ number_format($jurnal->kredit, 0, ',', '.') }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="text-center">Tidak ada data jurnal penyesuaian ditemukan.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
 
-    <div class="summary">
-        Total Debit: {{ number_format($totalDebit, 0, ',', '.') }}<br>
-        Total Kredit: {{ number_format($totalKredit, 0, ',', '.') }}
+        <div class="mt-3 text-end fw-semibold">
+            Total Debit: Rp {{ number_format($totalDebit, 0, ',', '.') }}<br>
+            Total Kredit: Rp {{ number_format($totalKredit, 0, ',', '.') }}
+        </div>
     </div>
-</div>
 
-<div class="note-box">
-    <strong>Catatan:</strong> Jurnal Penyesuaian mencatat penyesuaian terhadap akun-akun di akhir periode.
+    <div class="alert alert-success mt-3">
+        <strong>Catatan:</strong> Jurnal Penyesuaian mencatat penyesuaian terhadap akun-akun di akhir periode.
+    </div>
+
 </div>
 @endsection
