@@ -18,12 +18,16 @@ class NeracaSaldoController extends Controller
             'Aset' => [],
             'Kewajiban' => [],
             'Ekuitas' => [],
+            'Beban' => [],
+
         ];
 
         $total = [
             'Aset' => 0,
             'Kewajiban' => 0,
             'Ekuitas' => 0,
+            'Beban' => 0,
+
         ];
 
         foreach ($akuns as $akun) {

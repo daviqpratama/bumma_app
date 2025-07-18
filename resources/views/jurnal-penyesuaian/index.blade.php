@@ -4,13 +4,36 @@
 
 @section('content')
 <div class="container">
-
     <h3 class="mb-3">Jurnal Penyesuaian</h3>
 
+    <div class="mb-3">
+        <form action="{{ route('jurnal-penyesuaian.generate') }}" method="POST" onsubmit="return confirm('Yakin ingin membuat jurnal penyesuaian otomatis untuk bulan ini?')">
+            @csrf
+            <button type="submit" class="btn btn-primary">
+                Generate Penyesuaian Otomatis
+            </button>
+        </form>
+    </div>
+
+
     <form method="GET" action="{{ route('jurnal-penyesuaian.index') }}" class="d-flex gap-2 flex-wrap align-items-center mb-4">
-        <input type="date" name="tanggal" class="form-control" value="{{ request('tanggal') }}" style="max-width: 180px;">
+        <select name="bulan" class="form-control" style="max-width: 140px;">
+            @for ($i = 1; $i <= 12; $i++)
+                <option value="{{ sprintf('%02d', $i) }}" {{ request('bulan', $bulan) == sprintf('%02d', $i) ? 'selected' : '' }}>
+                    {{ DateTime::createFromFormat('!m', $i)->format('F') }}
+                </option>
+            @endfor
+        </select>
+
+        <select name="tahun" class="form-control" style="max-width: 140px;">
+            @for ($y = now()->year; $y >= now()->year - 5; $y--)
+                <option value="{{ $y }}" {{ request('tahun', $tahun) == $y ? 'selected' : '' }}>{{ $y }}</option>
+            @endfor
+        </select>
+
         <input type="text" name="nomor_jurnal" class="form-control" placeholder="Nomor Jurnal" value="{{ request('nomor_jurnal') }}" style="max-width: 180px;">
-        <button type="submit" class="btn btn-success">Cari Jurnal</button>
+
+        <button type="submit" class="btn btn-success">Tampilkan</button>
         <a href="{{ route('jurnal-penyesuaian.export.pdf') }}" class="btn btn-outline-danger">Ekspor PDF</a>
         <a href="{{ route('jurnal-penyesuaian.export.excel') }}" class="btn btn-outline-success">Ekspor Excel</a>
     </form>
@@ -55,7 +78,6 @@
                     </tr>
                 @endforelse
             </tbody>
-
         </table>
 
         <div class="mt-3 text-end fw-semibold">
@@ -67,6 +89,5 @@
     <div class="alert alert-success mt-3">
         <strong>Catatan:</strong> Jurnal Penyesuaian mencatat penyesuaian terhadap akun-akun di akhir periode.
     </div>
-
 </div>
 @endsection
