@@ -3,69 +3,85 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\Transaksi;
 use App\Models\Akun;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BukuBesarController extends Controller
 {
     public function index(Request $request)
     {
-        // Ambil daftar akun dari database
-        $akunList = Akun::all();
+        $daftarAkun = Akun::orderBy('kode')->get();
 
-        // Dummy data transaksi
-        $data = collect([
-            (object)['akun_id' => 1, 'tanggal' => '2024-04-10', 'no_ref' => 'TRX-001', 'deskripsi' => 'Penjualan hasil kebun', 'debit' => 5000000, 'kredit' => 0],
-            (object)['akun_id' => 2, 'tanggal' => '2024-04-12', 'no_ref' => 'TRX-002', 'deskripsi' => 'Pembelian alat tani', 'debit' => 0, 'kredit' => 2000000],
-            (object)['akun_id' => 1, 'tanggal' => '2024-04-15', 'no_ref' => 'TRX-003', 'deskripsi' => 'Pembayaran listrik', 'debit' => 0, 'kredit' => 500000],
-            (object)['akun_id' => 3, 'tanggal' => '2024-04-18', 'no_ref' => 'TRX-004', 'deskripsi' => 'Penjualan pupuk', 'debit' => 3000000, 'kredit' => 0],
-            (object)['akun_id' => 2, 'tanggal' => '2024-04-20', 'no_ref' => 'TRX-005', 'deskripsi' => 'Pembelian bibit', 'debit' => 0, 'kredit' => 1000000],
-            (object)['akun_id' => 1, 'tanggal' => '2024-04-22', 'no_ref' => 'TRX-006', 'deskripsi' => 'Penjualan hasil panen', 'debit' => 4000000, 'kredit' => 0],
-            (object)['akun_id' => 3, 'tanggal' => '2024-04-25', 'no_ref' => 'TRX-007', 'deskripsi' => 'Biaya transportasi', 'debit' => 0, 'kredit' => 750000],
-            (object)['akun_id' => 1, 'tanggal' => '2024-04-28', 'no_ref' => 'TRX-008', 'deskripsi' => 'Pendapatan tambahan', 'debit' => 1000000, 'kredit' => 0],
-        ]);
+        $transaksis = Transaksi::query();
 
-        // Filter berdasarkan akun
-        if ($request->filled('akun')) {
-            $data = $data->where('akun_id', $request->akun);
+        if ($request->filled('akun_id')) {
+            $transaksis->where('akun_id', $request->akun_id);
         }
 
-        // Filter berdasarkan tanggal
         if ($request->filled('tanggal')) {
-            $data = $data->where('tanggal', $request->tanggal);
+            $transaksis->whereDate('tanggal', '<=', $request->tanggal);
         }
+
+        $transaksis = $transaksis->orderBy('tanggal')->paginate(15)->withQueryString();
+
+        return view('buku-besar.index', [
+            'transaksis' => $transaksis,
+            'daftarAkun' => $daftarAkun
+        ]);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $transaksis = Transaksi::query();
+
+        if ($request->filled('akun_id')) {
+            $transaksis->where('akun_id', $request->akun_id);
+        }
+
+        if ($request->filled('tanggal')) {
+            $transaksis->whereDate('tanggal', '<=', $request->tanggal);
+        }
+
+        $transaksis = $transaksis->orderBy('tanggal')->get();
 
         // Hitung saldo berjalan
         $saldo = 0;
-        $data = $data->map(function ($item) use (&$saldo) {
+        foreach ($transaksis as $item) {
             $saldo += $item->debit - $item->kredit;
             $item->saldo = $saldo;
-            return $item;
-        });
+        }
 
-        // Pagination manual
-        $perPage = 5;
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $currentItems = $data->slice(($currentPage - 1) * $perPage, $perPage)->values();
-        $paginatedData = new LengthAwarePaginator($currentItems, $data->count(), $perPage, $currentPage, [
-            'path' => request()->url(),
-            'query' => request()->query(),
-        ]);
-
-        return view('buku-besar.index', [
-            'akunList' => $akunList,
-            'data' => $paginatedData,
-            'paginatedData' => $paginatedData,
-        ]);
+        $pdf = Pdf::loadView('buku-besar.export-pdf', compact('transaksis'));
+        return $pdf->download('laporan-buku-besar.pdf');
     }
 
-    public function exportPdf()
+    public function exportExcel(Request $request)
     {
-        return 'Export PDF belum diimplementasi';
-    }
+        $transaksis = Transaksi::query();
 
-    public function exportExcel()
-    {
-        return 'Export Excel belum diimplementasi';
+        if ($request->filled('akun_id')) {
+            $transaksis->where('akun_id', $request->akun_id);
+        }
+
+        if ($request->filled('tanggal')) {
+            $transaksis->whereDate('tanggal', '<=', $request->tanggal);
+        }
+
+        $transaksis = $transaksis->orderBy('tanggal')->get();
+
+        // Hitung saldo berjalan
+        $saldo = 0;
+        foreach ($transaksis as $item) {
+            $saldo += $item->debit - $item->kredit;
+            $item->saldo = $saldo;
+        }
+
+        $content = view('buku-besar.excel', compact('transaksis'))->render();
+
+
+        return response($content)
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', 'attachment; filename="laporan-buku-besar.xls"');
     }
 }

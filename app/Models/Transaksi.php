@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Transaksi extends Model
 {
     use HasFactory;
 
-    // ⬅️ Ini penting untuk mass-assignment (store otomatis dari controller)
+    protected $table = 'transaksis'; // Sesuaikan dengan nama tabel di database
+
     protected $fillable = [
         'tanggal',
         'keterangan',
@@ -19,9 +20,25 @@ class Transaksi extends Model
         'nominal_kredit',
     ];
 
-    // Relasi opsional jika kamu ingin nanti buat relasi dengan JurnalUmum
-    // public function jurnal()
-    // {
-    //     return $this->hasMany(JurnalUmum::class, 'kode_jurnal', 'id');
-    // }
+    /**
+     * Relasi ke akun debit
+     */
+    public function akunDebit()
+    {
+        return $this->belongsTo(Akun::class, 'akun_debit');
+    }
+
+    /**
+     * Relasi ke akun kredit
+     */
+    public function akunKredit()
+    {
+        return $this->belongsTo(Akun::class, 'akun_kredit');
+    }
+    // App\Models\Transaksi.php
+public function akun()
+{
+    return $this->belongsTo(Akun::class);
+}
+
 }

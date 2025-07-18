@@ -1,69 +1,74 @@
-@extends('layouts.app')
+@extends('layouts.admin')
+
+@section('title', 'Buku Besar')
 
 @section('content')
-<div class="bg-[#f4f5ec] min-h-screen px-8 py-6">
-    <h2 class="text-2xl font-bold text-green-900 mb-6">Buku Besar</h2>
+<div class="container-fluid mt-4 px-4">
+    <h3 class="fw-bold mb-3">Buku Besar</h3>
 
-    <form method="GET" class="flex flex-wrap items-center gap-3 mb-6">
-        <select name="akun" class="bg-[#e0e8d2] text-gray-700 px-4 py-2 rounded shadow">
-            <option value="">Pilih Akun</option>
-            @foreach ($akunList as $akun)
-                <option value="{{ $akun->id }}" {{ request('akun') == $akun->id ? 'selected' : '' }}>
-                    {{ $akun->nama }}
-                </option>
-            @endforeach
-        </select>
+    <!-- Filter & Ekspor -->
+    <div class="d-flex align-items-center gap-3 bg-light p-3 rounded shadow-sm mb-4">
+        <form action="{{ route('buku-besar.index') }}" method="GET" class="d-flex align-items-center gap-2">
+            <select name="akun_id" class="form-select" style="width: 180px;">
+                <option value="">Pilih Akun</option>
+                @foreach ($daftarAkun as $akun)
+                    <option value="{{ $akun->id }}" {{ request('akun_id') == $akun->id ? 'selected' : '' }}>
+                        {{ $akun->kode }} - {{ $akun->nama }}
+                    </option>
+                @endforeach
+            </select>
 
-        <input type="date" name="tanggal" value="{{ request('tanggal') }}"
-            class="bg-[#e0e8d2] text-gray-700 px-4 py-2 rounded shadow">
+            <input type="date" name="tanggal" value="{{ request('tanggal') }}" class="form-control" style="width: 180px;">
 
-        <button type="submit"
-            class="bg-[#5e7444] text-white px-4 py-2 rounded shadow hover:bg-[#4d6036]">Terapkan Filter</button>
+            <button type="submit" class="btn btn-success">Terapkan Filter</button>
+        </form>
 
-        <a href="#" class="bg-[#d9e7c3] text-black px-4 py-2 rounded shadow hover:bg-[#c3d6a7]">Ekspor PDF</a>
-        <a href="#" class="bg-[#d9e7c3] text-black px-4 py-2 rounded shadow hover:bg-[#c3d6a7]">Ekspor Excel</a>
-    </form>
+        <!-- Tombol Ekspor -->
+        <div class="ms-auto d-flex gap-2">
+            <a href="{{ route('buku-besar.exportPdf', request()->all()) }}" class="btn btn-outline-secondary">Ekspor PDF</a>
+            <a href="{{ route('buku-besar.exportExcel', request()->all()) }}" class="btn btn-outline-secondary">Ekspor Excel</a>
+        </div>
+    </div>
 
-    <div class="bg-white shadow rounded overflow-x-auto">
-        <table class="w-full text-sm text-left">
-            <thead class="bg-[#dcdcd1] text-gray-800 font-semibold">
-                <tr>
-                    <th class="px-4 py-3">Tanggal</th>
-                    <th class="px-4 py-3">No Ref</th>
-                    <th class="px-4 py-3">Deskripsi</th>
-                    <th class="px-4 py-3">Debit</th>
-                    <th class="px-4 py-3">Kredit</th>
-                    <th class="px-4 py-3">Saldo</th>
-                </tr>
-            </thead>
-            <tbody class="text-gray-900 bg-white">
-                @forelse ($paginatedData as $item)
-                    <tr class="border-t hover:bg-[#f7faf0]">
-                        <td class="px-4 py-2">{{ \Carbon\Carbon::parse($item->tanggal)->format('d M Y') }}</td>
-                        <td class="px-4 py-2">{{ $item->no_ref }}</td>
-                        <td class="px-4 py-2">{{ $item->deskripsi }}</td>
-                        <td class="px-4 py-2 text-right">{{ $item->debit > 0 ? number_format($item->debit, 0, ',', '.') : '-' }}</td>
-                        <td class="px-4 py-2 text-right">{{ $item->kredit > 0 ? number_format($item->kredit, 0, ',', '.') : '-' }}</td>
-                        <td class="px-4 py-2 text-right">{{ number_format($item->saldo, 0, ',', '.') }}</td>
-                    </tr>
-                @empty
+    <!-- Tabel Buku Besar -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-bordered table-hover m-0">
+                <thead class="table-light">
                     <tr>
-                        <td colspan="6" class="text-center text-gray-500 py-4">Tidak ada data.</td>
+                        <th>Tanggal</th>
+                        <th>No Ref</th>
+                        <th>Deskripsi</th>
+                        <th>Debit</th>
+                        <th>Kredit</th>
+                        <th>Saldo</th>
                     </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @php $saldoBerjalan = 0; @endphp
+                    @forelse ($transaksis as $data)
+                        @php $saldoBerjalan += $data->debit - $data->kredit; @endphp
+                        <tr>
+                            <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d M Y') }}</td>
+                            <td>{{ $data->id }}</td>
+                            <td>{{ $data->keterangan }}</td>
+                            <td>{{ number_format($data->debit, 0, ',', '.') }}</td>
+                            <td>{{ number_format($data->kredit, 0, ',', '.') }}</td>
+                            <td>{{ number_format($saldoBerjalan, 0, ',', '.') }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">Tidak ada data</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
-    <!-- Custom pagination -->
-    <div class="mt-6 flex justify-center">
-        {{ $paginatedData->onEachSide(1)->links('vendor.pagination.custom') }}
+        <!-- Pagination -->
+        <div class="card-footer d-flex justify-content-center">
+            {{ $transaksis->links('pagination::bootstrap-5') }}
+        </div>
     </div>
-    <style>
-    body {
-        background-color: #f4f5ec !important;
-    }
-</style>
-
 </div>
 @endsection

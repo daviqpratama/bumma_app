@@ -2,10 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Akun extends Model
 {
-    // Jika kamu punya nama tabel custom, tambahkan:
-    // protected $table = 'nama_tabel';
+    use HasFactory;
+
+    protected $fillable = ['kode', 'nama', 'jenis'];
+
+    public function transaksis()
+    {
+        return $this->hasMany(Transaksi::class);
+    }
 }

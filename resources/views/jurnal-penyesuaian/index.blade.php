@@ -1,6 +1,6 @@
-@extends('layouts.admin') {{-- Sebelumnya layouts.app --}}
+@extends('layouts.admin') {{-- Layout sudah benar --}}
 
-@section('title', 'Jurnal Umum')
+@section('title', 'Jurnal Penyesuaian')
 
 @section('content')
 <style>
@@ -105,14 +105,14 @@
     }
 </style>
 
-<h3>Jurnal Umum</h3>
+<h3>Jurnal Penyesuaian</h3>
 
-<form method="GET" action="{{ route('jurnal-umum') }}" class="filter-bar">
+<form method="GET" action="{{ route('jurnal-penyesuaian.index') }}" class="filter-bar">
     <input type="date" name="tanggal" value="{{ request('tanggal') }}">
     <input type="text" name="nomor_jurnal" placeholder="Nomor Jurnal" value="{{ request('nomor_jurnal') }}">
     <button type="submit">Cari Jurnal</button>
-    <a href="#">Ekspor PDF</a>
-    <a href="#">Ekspor Excel</a>
+    <a href="{{ route('jurnal-penyesuaian.export.pdf') }}">Ekspor PDF</a>
+    <a href="{{ route('jurnal-penyesuaian.export.excel') }}">Ekspor Excel</a>
 </form>
 
 <div class="table-wrapper">
@@ -139,7 +139,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="text-center">Tidak ada data jurnal ditemukan.</td>
+                    <td colspan="6" class="text-center">Tidak ada data jurnal penyesuaian ditemukan.</td>
                 </tr>
             @endforelse
         </tbody>
@@ -152,6 +152,6 @@
 </div>
 
 <div class="note-box">
-    <strong>Catatan:</strong> Jurnal Umum dicatat berdasarkan transaksi harian yang terjadi.
+    <strong>Catatan:</strong> Jurnal Penyesuaian mencatat penyesuaian terhadap akun-akun di akhir periode.
 </div>
 @endsection

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\SaldoAwal;
 use App\Models\JurnalUmum;
+use App\Models\Akun; // ✅ Tambahkan ini
 
 class SaldoAwalController extends Controller
 {
@@ -12,7 +13,6 @@ class SaldoAwalController extends Controller
     {
         $query = SaldoAwal::query();
 
-        // Tambahkan filter jika ada pencarian
         if ($request->has('search') && $request->search != '') {
             $query->where('akun', 'like', '%' . $request->search . '%');
         }
@@ -30,53 +30,51 @@ class SaldoAwalController extends Controller
             'kredit' => 'nullable|numeric',
         ]);
 
-        // Simpan ke Saldo Awal
+        // Simpan ke saldo_awal
         $saldoAwal = SaldoAwal::create([
             'akun' => $request->akun,
             'debit' => $request->debit ?? 0,
             'kredit' => $request->kredit ?? 0,
         ]);
 
-        // Buat kode jurnal otomatis
-$kodeJurnal = 'SA-' . now()->format('YmdHis');
+        // Ambil ID akun dari nama
+        $akun = Akun::where('nama', $request->akun)->first();
 
-// Simpan ke Jurnal Umum (jika nominalnya bukan 0)
+        if (!$akun) {
+            return back()->withErrors(['akun' => 'Akun tidak ditemukan di tabel akuns.']);
+        }
+
+        $kodeJurnal = 'SA-' . now()->format('YmdHis');
+
+        // Simpan ke jurnal umum
+        // Simpan ke jurnal umum berdasarkan posisi
 if ($saldoAwal->debit > 0) {
     JurnalUmum::create([
-        'tanggal' => now()->toDateString(),
-        'kode_jurnal' => $kodeJurnal,
-        'keterangan' => 'Saldo Awal - ' . $saldoAwal->akun,
-        'akun_id' => $request->akun, // GANTI INI
-        'ref' => '-',
-        'debit' => $saldoAwal->debit,
-        'kredit' => 0,
-    ]);
-} elseif ($saldoAwal->kredit > 0) {
+    'tanggal'     => now()->toDateString(),
+    'kode_jurnal' => $kodeJurnal,
+    'keterangan'  => 'Saldo Awal - ' . $akun->nama,
+    'akun_id'     => $akun->id,
+    'akun'        => $akun->nama, // ✅ Akun tidak kosong
+    'posisi'      => 'debit',
+    'nominal'     => $saldoAwal->debit,
+    'ref'         => 'Saldo Awal', // ✅ Ref tidak kosong
+]);
+
+
+}
+
+if ($saldoAwal->kredit > 0) {
     JurnalUmum::create([
-    'tanggal' => now()->toDateString(),
-    'kode_jurnal' => $kodeJurnal,
-    'keterangan' => 'Saldo Awal - ' . $saldoAwal->akun,
-    'akun_id' => $akunId, // Pastikan ini ID, bukan nama
-    'ref' => '-',
-    'debit' => $saldoAwal->debit,
-    'kredit' => $saldoAwal->kredit,
-    'nominal' => $saldoAwal->debit + $saldoAwal->kredit,
-]);
+        'tanggal'     => now()->toDateString(),
+        'kode_jurnal' => $kodeJurnal,
+        'keterangan'  => 'Saldo Awal - ' . $saldoAwal->akun,
+        'akun_id'     => $akun->id,
+        'posisi'      => 'kredit',
+        'nominal'     => $saldoAwal->kredit,
+        'ref'         => '-',
+    ]);
+}
 
-
-
-        } elseif ($saldoAwal->kredit > 0) {
-           JurnalUmum::create([
-    'tanggal' => now()->toDateString(),
-    'kode_jurnal' => $kodeJurnal,
-    'keterangan' => 'Saldo Awal - ' . $saldoAwal->akun,
-    'akun' => $saldoAwal->akun, // <- pakai ini
-    'ref' => '-',
-    'debit' => $saldoAwal->debit,
-    'kredit' => $saldoAwal->kredit,
-]);
-
-        }
 
         return redirect()->route('saldo-awal.index')->with('success', 'Data saldo awal berhasil disimpan dan dicatat di jurnal umum!');
     }

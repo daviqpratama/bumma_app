@@ -1,55 +1,83 @@
-@extends('layouts.admin')
+@extends('layouts.app')
+
+@section('title', 'Tambah Transaksi')
 
 @section('content')
-    <h1 class="text-2xl font-bold mb-4">Input Transaksi</h1>
-
-    @if ($errors->any())
-        <div class="bg-red-100 text-red-800 p-4 mb-4 rounded">
-            <ul class="list-disc pl-6">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <form action="{{ route('transaksi.store') }}" method="POST" class="space-y-4">
-        @csrf
-
-        <div>
-            <label class="block font-semibold">Tanggal:</label>
-            <input type="date" name="tanggal" class="border rounded w-full p-2" required>
+<div class="container">
+    <div class="card border-success shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Tambah Transaksi</h5>
         </div>
 
-        <div>
-            <label class="block font-semibold">Keterangan:</label>
-            <input type="text" name="keterangan" class="border rounded w-full p-2" required>
-        </div>
+        <div class="card-body">
+            {{-- Tampilkan error validasi --}}
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-        <div>
-            <label class="block font-semibold">Akun Debit:</label>
-            <input type="text" name="akun_debit" class="border rounded w-full p-2" required>
-        </div>
+            {{-- Jika belum ada akun --}}
+            @if ($akuns->isEmpty())
+                <div class="alert alert-warning">Belum ada data akun. Silakan tambahkan akun terlebih dahulu.</div>
+            @endif
 
-        <div>
-            <label class="block font-semibold">Nominal Debit:</label>
-            <input type="number" step="0.01" name="nominal_debit" class="border rounded w-full p-2" required>
-        </div>
+            {{-- Form --}}
+            <form action="{{ route('transaksi.store') }}" method="POST">
+                @csrf
 
-        <div>
-            <label class="block font-semibold">Akun Kredit:</label>
-            <input type="text" name="akun_kredit" class="border rounded w-full p-2" required>
-        </div>
+                <div class="mb-3">
+                    <label for="tanggal" class="form-label">Tanggal</label>
+                    <input type="date" name="tanggal" class="form-control" value="{{ old('tanggal') }}" required>
+                </div>
 
-        <div>
-            <label class="block font-semibold">Nominal Kredit:</label>
-            <input type="number" step="0.01" name="nominal_kredit" class="border rounded w-full p-2" required>
-        </div>
+                <div class="mb-3">
+                    <label for="keterangan" class="form-label">Keterangan</label>
+                    <input type="text" name="keterangan" class="form-control" value="{{ old('keterangan') }}" required>
+                </div>
 
-        <div>
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-                Simpan Transaksi
-            </button>
+                <div class="mb-3">
+                    <label for="akun_debit" class="form-label">Akun Debit</label>
+                    <select name="akun_debit" class="form-select" required>
+                        <option value="">-- Pilih Akun Debit --</option>
+                        @foreach ($akuns as $akun)
+                            <option value="{{ $akun->id }}" {{ old('akun_debit') == $akun->id ? 'selected' : '' }}>
+                                {{ $akun->kode }} - {{ $akun->nama }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="nominal_debit" class="form-label">Nominal Debit</label>
+                    <input type="number" name="nominal_debit" class="form-control" value="{{ old('nominal_debit') }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="akun_kredit" class="form-label">Akun Kredit</label>
+                    <select name="akun_kredit" class="form-select" required>
+                        <option value="">-- Pilih Akun Kredit --</option>
+                        @foreach ($akuns as $akun)
+                            <option value="{{ $akun->id }}" {{ old('akun_kredit') == $akun->id ? 'selected' : '' }}>
+                                {{ $akun->kode }} - {{ $akun->nama }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="nominal_kredit" class="form-label">Nominal Kredit</label>
+                    <input type="number" name="nominal_kredit" class="form-control" value="{{ old('nominal_kredit') }}" required>
+                </div>
+
+                <button type="submit" class="btn btn-success">Simpan</button>
+                <a href="{{ route('transaksi.index') }}" class="btn btn-secondary">Kembali</a>
+            </form>
         </div>
-    </form>
+    </div>
+</div>
 @endsection

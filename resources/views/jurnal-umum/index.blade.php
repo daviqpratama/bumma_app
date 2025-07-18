@@ -13,6 +13,8 @@
                     <th>Keterangan</th>
                     <th>Posisi</th>
                     <th>Nominal</th>
+                    <th>Ref</th>
+                    <th>Waktu Input</th> {{-- created_at --}}
                 </tr>
             </thead>
             <tbody>
@@ -24,10 +26,12 @@
                         <td>{{ $jurnal->keterangan }}</td>
                         <td>{{ ucfirst($jurnal->posisi) }}</td>
                         <td>Rp{{ number_format($jurnal->nominal, 2, ',', '.') }}</td>
+                        <td>{{ $jurnal->ref }}</td>
+                        <td>{{ \Carbon\Carbon::parse($jurnal->created_at)->format('d-m-Y H:i') }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center">Data jurnal tidak ditemukan.</td>
+                        <td colspan="8" class="text-center">Data jurnal tidak ditemukan.</td>
                     </tr>
                 @endforelse
             </tbody>

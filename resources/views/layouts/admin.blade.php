@@ -105,6 +105,12 @@
                 </a>
             </li>
             <li>
+    <a href="{{ route('transaksi.index') }}" class="{{ request()->routeIs('transaksi.*') ? 'active' : '' }}">
+        <span class="icon-wrapper">💳</span> Transaksi
+    </a>
+</li>
+
+            <li>
                 <a href="{{ route('buku-besar.index') }}" class="{{ request()->routeIs('buku-besar.index') ? 'active' : '' }}">
                     <span class="icon-wrapper">📚</span> Buku Besar
                 </a>

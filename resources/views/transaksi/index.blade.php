@@ -30,9 +30,9 @@
                     <tr>
                         <td>{{ $transaksi->tanggal }}</td>
                         <td>{{ $transaksi->keterangan }}</td>
-                        <td>{{ $transaksi->akun_debit }}</td>
+                        <td>{{ $transaksi->akunDebit->nama ?? '-' }}</td>
                         <td>Rp{{ number_format($transaksi->nominal_debit, 2, ',', '.') }}</td>
-                        <td>{{ $transaksi->akun_kredit }}</td>
+                        <td>{{ $transaksi->akunKredit->nama ?? '-' }}</td>
                         <td>Rp{{ number_format($transaksi->nominal_kredit, 2, ',', '.') }}</td>
                     </tr>
                 @empty
