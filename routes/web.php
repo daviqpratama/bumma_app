@@ -11,6 +11,7 @@ use App\Http\Controllers\NeracaLajurController;
 use App\Http\Controllers\LaporanKeuanganController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LaporanKinerjaController;
 
 Route::get('/', fn () => redirect()->route('dashboard'));
 
@@ -32,7 +33,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user/dashboard', [DashboardController::class, 'userDashboard'])->name('user.dashboard');
 
     // ✅ Laporan Kinerja
-    Route::view('/laporan-kinerja', 'laporan-kinerja.index')->name('laporan.kinerja');
+     Route::get('/laporan-kinerja', [LaporanKinerjaController::class, 'index'])->name('laporan.kinerja');
 
     // ---------------------------
     // ADMIN ROUTES ONLY

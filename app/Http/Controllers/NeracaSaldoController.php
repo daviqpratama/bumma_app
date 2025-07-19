@@ -19,7 +19,7 @@ class NeracaSaldoController extends Controller
             'Kewajiban' => [],
             'Ekuitas' => [],
             'Beban' => [],
-
+            'Pendapatan' => [],
         ];
 
         $total = [
@@ -27,6 +27,7 @@ class NeracaSaldoController extends Controller
             'Kewajiban' => 0,
             'Ekuitas' => 0,
             'Beban' => 0,
+            'Pendapatan' => 0,
 
         ];
 

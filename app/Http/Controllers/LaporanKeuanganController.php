@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Akun;
 use App\Models\JurnalUmum;
 use App\Models\SaldoAwal;
+use Carbon\Carbon;
 
 class LaporanKeuanganController extends Controller
 {
@@ -19,27 +20,25 @@ class LaporanKeuanganController extends Controller
         $tahun = date('Y');
 
         $pendapatanAkuns = Akun::where('jenis', 'Pendapatan')->get();
-        $totalPendapatan = 0;
         foreach ($pendapatanAkuns as $akun) {
             $akun->jumlah = JurnalUmum::where('akun_id', $akun->id)
                 ->where('posisi', 'kredit')
                 ->whereYear('tanggal', $tahun)
                 ->whereIn('ref', ['Transaksi', 'Penyesuaian'])
                 ->sum('nominal');
-            $totalPendapatan += $akun->jumlah;
         }
 
         $bebanAkuns = Akun::where('jenis', 'Beban')->get();
-        $totalBeban = 0;
         foreach ($bebanAkuns as $akun) {
             $akun->jumlah = JurnalUmum::where('akun_id', $akun->id)
                 ->where('posisi', 'debit')
                 ->whereYear('tanggal', $tahun)
                 ->whereIn('ref', ['Transaksi', 'Penyesuaian'])
                 ->sum('nominal');
-            $totalBeban += $akun->jumlah;
         }
 
+        $totalPendapatan = $pendapatanAkuns->sum('jumlah');
+        $totalBeban = $bebanAkuns->sum('jumlah');
         $labaSebelumPajak = $totalPendapatan - $totalBeban;
 
         return view('laporan-keuangan.sisa-hasil-usaha', compact(
@@ -52,117 +51,97 @@ class LaporanKeuanganController extends Controller
         ));
     }
 
-   public function posisiKeuangan()
-{
-    $tahun = date('Y'); // atau bisa pakai request('tahun')
+    public function posisiKeuangan()
+    {
+        $tahun = date('Y');
+        $akuns = Akun::with(['saldoAwals', 'jurnalUmum'])->get();
 
-    $akuns = Akun::all();
+        foreach ($akuns as $akun) {
+            $saldoAwalDebit = $akun->saldoAwals->filter(fn($s) => Carbon::parse($s->created_at)->year == $tahun)->sum('debit');
+            $saldoAwalKredit = $akun->saldoAwals->filter(fn($s) => Carbon::parse($s->created_at)->year == $tahun)->sum('kredit');
 
-    foreach ($akuns as $akun) {
-        // Saldo awal
-        $saldoAwalDebit = $akun->saldoAwals()->whereYear('created_at', $tahun)->sum('debit');
-        $saldoAwalKredit = $akun->saldoAwals()->whereYear('created_at', $tahun)->sum('kredit');
+            $jurnalDebit = $akun->jurnalUmum->filter(fn($j) =>
+                $j->posisi == 'debit' &&
+                in_array($j->ref, ['Transaksi', 'Penyesuaian']) &&
+                Carbon::parse($j->tanggal)->year == $tahun
+            )->sum('nominal');
 
-        // Jurnal transaksi dan penyesuaian
-        $jurnalDebit = $akun->jurnalUmum()
-            ->whereYear('tanggal', $tahun)
-            ->where('posisi', 'debit')
-            ->whereIn('ref', ['Transaksi', 'Penyesuaian'])
-            ->sum('nominal');
+            $jurnalKredit = $akun->jurnalUmum->filter(fn($j) =>
+                $j->posisi == 'kredit' &&
+                in_array($j->ref, ['Transaksi', 'Penyesuaian']) &&
+                Carbon::parse($j->tanggal)->year == $tahun
+            )->sum('nominal');
 
-        $jurnalKredit = $akun->jurnalUmum()
-            ->whereYear('tanggal', $tahun)
-            ->where('posisi', 'kredit')
-            ->whereIn('ref', ['Transaksi', 'Penyesuaian'])
-            ->sum('nominal');
+            $totalDebit = $saldoAwalDebit + $jurnalDebit;
+            $totalKredit = $saldoAwalKredit + $jurnalKredit;
 
-        $totalDebit = $saldoAwalDebit + $jurnalDebit;
-        $totalKredit = $saldoAwalKredit + $jurnalKredit;
-
-        // Hitung saldo berdasarkan tipe
-        if (in_array($akun->tipe, ['Aktiva', 'Beban'])) {
-            $akun->saldo = $totalDebit - $totalKredit;
-        } else {
-            $akun->saldo = $totalKredit - $totalDebit;
+            $akun->saldo = in_array($akun->tipe ?? '', ['Aktiva', 'Beban'])
+                ? $totalDebit - $totalKredit
+                : $totalKredit - $totalDebit;
         }
 
-        // Format nama_akun untuk view
-        $akun->nama_akun = $akun->nama;
+        $aktiva = $akuns->where('tipe', 'Aktiva')->groupBy('kelompok');
+        $pasiva = $akuns->where('tipe', 'Pasiva')->groupBy('kelompok');
+
+        return view('laporan-keuangan.posisi-keuangan', compact('aktiva', 'pasiva'));
     }
-
-    $aktiva = $akuns->where('tipe', 'Aktiva')->groupBy('kelompok');
-    $pasiva = $akuns->where('tipe', 'Pasiva')->groupBy('kelompok');
-
-    return view('laporan-keuangan.posisi-keuangan', compact('aktiva', 'pasiva'));
-}
-
 
     public function perubahanEkuitas()
     {
         $tahun = request('tahun') ?? date('Y');
 
-        $modalAwal = Akun::where('jenis', 'Ekuitas')->with('saldoAwals')->get()->sum(function ($akun) use ($tahun) {
-            return $akun->saldoAwals->where('created_at', 'like', $tahun . '%')->sum(function ($s) {
-                return ($s->debit ?? 0) - ($s->kredit ?? 0);
-            });
+        $akunEkuitas = Akun::where('jenis', 'Ekuitas')->with('saldoAwals')->get();
+
+        $modalAwal = $akunEkuitas->sum(function ($akun) use ($tahun) {
+            return $akun->saldoAwals->filter(function ($s) use ($tahun) {
+                return Carbon::parse($s->created_at)->year == $tahun;
+            })->sum(fn($s) => ($s->kredit ?? 0) - ($s->debit ?? 0));
         });
 
-        $pendapatan = JurnalUmum::whereHas('akun', function ($query) {
-            $query->where('jenis', 'Pendapatan');
-        })
+        $pendapatan = JurnalUmum::whereHas('akun', fn($q) => $q->where('jenis', 'Pendapatan'))
             ->whereYear('tanggal', $tahun)
             ->where('posisi', 'kredit')
             ->whereIn('ref', ['Transaksi', 'Penyesuaian'])
             ->sum('nominal');
 
-        $beban = JurnalUmum::whereHas('akun', function ($query) {
-            $query->where('jenis', 'Beban');
-        })
+        $beban = JurnalUmum::whereHas('akun', fn($q) => $q->where('jenis', 'Beban'))
             ->whereYear('tanggal', $tahun)
             ->where('posisi', 'debit')
             ->whereIn('ref', ['Transaksi', 'Penyesuaian'])
             ->sum('nominal');
 
-        $labaRugi = $pendapatan - $beban;
+        $shu = $pendapatan - $beban;
 
-        $danaKomunitas = JurnalUmum::whereHas('akun', function ($query) {
-            $query->where('kode', '311');
-        })
+        $danaKomunitas = JurnalUmum::whereHas('akun', fn($q) => $q->where('kode', '311'))
             ->whereYear('tanggal', $tahun)
             ->sum('nominal');
 
-        $asetTetap = JurnalUmum::whereHas('akun', function ($query) {
-            $query->where('kode', '112');
-        })
+        $asetTetap = JurnalUmum::whereHas('akun', fn($q) => $q->where('kode', '112'))
             ->whereYear('tanggal', $tahun)
             ->sum('nominal');
 
-        $distribusi = JurnalUmum::whereHas('akun', function ($query) {
-            $query->where('kode', '511');
-        })
+        $distribusi = JurnalUmum::whereHas('akun', fn($q) => $q->where('kode', '511'))
             ->whereYear('tanggal', $tahun)
             ->sum('nominal');
 
-        $biayaRitual = JurnalUmum::whereHas('akun', function ($query) {
-            $query->where('kode', '611');
-        })
+        $biayaRitual = JurnalUmum::whereHas('akun', fn($q) => $q->where('kode', '611'))
             ->whereYear('tanggal', $tahun)
             ->sum('nominal');
 
-        $perubahan = $labaRugi + $danaKomunitas + $asetTetap - $distribusi - $biayaRitual;
+        $perubahan = $shu + $danaKomunitas + $asetTetap - $distribusi - $biayaRitual;
         $modalAkhir = $modalAwal + $perubahan;
 
-        $data = [
-            'modal_awal' => $modalAwal,
-            'shu' => $labaRugi,
-            'dana_komunitas' => $danaKomunitas,
-            'aset_tetap' => $asetTetap,
-            'distribusi_masyarakat' => $distribusi,
-            'biaya_ritual' => $biayaRitual,
-            'perubahan' => $perubahan,
-            'modal_akhir' => $modalAkhir,
-            'tahun' => $tahun,
-        ];
+        $data = compact(
+            'modalAwal',
+            'shu',
+            'danaKomunitas',
+            'asetTetap',
+            'distribusi',
+            'biayaRitual',
+            'perubahan',
+            'modalAkhir',
+            'tahun'
+        );
 
         return view('laporan-keuangan.perubahan-ekuitas', compact('data'));
     }
@@ -195,8 +174,7 @@ class LaporanKeuanganController extends Controller
         $jurnals = JurnalUmum::with('akun')->whereYear('tanggal', $tahun)->get();
 
         foreach ($jurnals as $jurnal) {
-            $nama = strtolower($jurnal->akun->nama);
-
+            $nama = strtolower(optional($jurnal->akun)->nama ?? '');
             foreach ($data->keys() as $key) {
                 if (str_contains($nama, str_replace('_', ' ', $key))) {
                     $data[$key] += $jurnal->nominal;
@@ -204,7 +182,7 @@ class LaporanKeuanganController extends Controller
             }
         }
 
-        $data['kas_awal'] = SaldoAwal::sum('saldo');
+        $data['kas_awal'] = SaldoAwal::sum('debit') - SaldoAwal::sum('kredit');
 
         $totalPenerimaan = $data->only([
             'penjualan_produk',
@@ -229,7 +207,6 @@ class LaporanKeuanganController extends Controller
         ])->sum();
 
         $kas_bersih = $totalPenerimaan - $totalPengeluaran;
-
         $data['kas_akhir'] = $data['kas_awal'] + $kas_bersih;
 
         return view('laporan-keuangan.arus-kas', [
@@ -237,5 +214,4 @@ class LaporanKeuanganController extends Controller
             'tahun' => $tahun,
         ]);
     }
-
 }

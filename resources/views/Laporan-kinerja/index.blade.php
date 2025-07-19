@@ -4,7 +4,19 @@
 
 @section('content')
 <div class="container mt-4">
-    <h5><strong>BUMMA</strong><br>LAPORAN KINERJA <br>PERIODE 2025</h5>
+    <h5><strong>BUMMA</strong><br>LAPORAN KINERJA <br>PERIODE {{ $tahun }}</h5>
+
+    <form method="GET" class="mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-auto">
+                <label for="tahun" class="form-label">Tahun:</label>
+                <input type="number" name="tahun" id="tahun" value="{{ $tahun }}" class="form-control">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-success">Tampilkan</button>
+            </div>
+        </div>
+    </form>
 
     <div class="row mt-4">
         <!-- Bagian Kiri -->
