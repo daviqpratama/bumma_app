@@ -12,6 +12,8 @@ use App\Http\Controllers\LaporanKeuanganController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\LaporanKinerjaController;
+use App\Http\Controllers\RiwayatTransaksiController;
+use App\Http\Controllers\DistribusiSosialController;
 
 Route::get('/', fn () => redirect()->route('dashboard'));
 
@@ -83,8 +85,8 @@ Route::middleware(['auth'])->group(function () {
     // ---------------------------
     Route::middleware(['role:user'])->group(function () {
         Route::view('/daftar_usaha', 'daftar_usaha')->name('daftar_usaha');
-        Route::view('/riwayat_transaksi', 'riwayat_transaksi')->name('riwayat_transaksi');
-        Route::view('/distribusi_dana_sosial', 'distribusi_dana_sosial')->name('distribusi_dana_sosial');
+        Route::get('/riwayat-transaksi', [RiwayatTransaksiController::class, 'index'])->name('riwayat_transaksi');
+        Route::get('/distribusi-sosial', [DistribusiSosialController::class, 'index'])->name('distribusi_dana_sosial');
         Route::view('/kehutanan', 'kehutanan.index')->name('kehutanan.index');
         Route::view('/ekowisata', 'ekowisata.index')->name('ekowisata.index');
         Route::view('/pertanian', 'pertanian.index')->name('pertanian.index');

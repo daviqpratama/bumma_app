@@ -11,7 +11,7 @@
         </tr>
         <tr>
             <td>Modal Awal</td>
-            <td class="text-end">{{ number_format($data['modal_awal'], 0, ',', '.') }}</td>
+            <td class="text-end">{{ number_format($data['modalAwal'], 0, ',', '.') }}</td>
         </tr>
         <tr>
             <td>+ SHU Tahun Berjalan</td>
@@ -19,19 +19,19 @@
         </tr>
         <tr>
             <td>+ Dana Komunitas</td>
-            <td class="text-end">{{ number_format($data['dana_komunitas'], 0, ',', '.') }}</td>
+            <td class="text-end">{{ number_format($data['danaKomunitas'], 0, ',', '.') }}</td>
         </tr>
         <tr>
             <td>+ Penambahan Aset Tetap</td>
-            <td class="text-end">{{ number_format($data['aset_tetap'], 0, ',', '.') }}</td>
+            <td class="text-end">{{ number_format($data['asetTetap'], 0, ',', '.') }}</td>
         </tr>
         <tr>
             <td>- Distribusi Masyarakat</td>
-            <td class="text-end">{{ number_format($data['distribusi_masyarakat'], 0, ',', '.') }}</td>
+            <td class="text-end">{{ number_format($data['distribusi'], 0, ',', '.') }}</td>
         </tr>
         <tr>
             <td>- Biaya Ritual & Ekosistem</td>
-            <td class="text-end">{{ number_format($data['biaya_ritual'], 0, ',', '.') }}</td>
+            <td class="text-end">{{ number_format($data['biayaRitual'], 0, ',', '.') }}</td>
         </tr>
         <tr class="fw-bold">
             <td>Perubahan Ekuitas</td>
@@ -39,7 +39,7 @@
         </tr>
         <tr class="fw-bold">
             <td>Modal Akhir</td>
-            <td class="text-end">{{ number_format($data['modal_akhir'], 0, ',', '.') }}</td>
+            <td class="text-end">{{ number_format($data['modalAkhir'], 0, ',', '.') }}</td>
         </tr>
     </table>
 </div>
