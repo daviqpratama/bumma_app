@@ -20,4 +20,9 @@ class Akun extends Model
     {
         return $this->hasMany(SaldoAwal::class, 'akuns_id');
     }
+
+        public function jurnalUmum()
+    {
+        return $this->hasMany(JurnalUmum::class, 'akun_id');
+    }
 }
