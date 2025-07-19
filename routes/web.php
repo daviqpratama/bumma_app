@@ -71,6 +71,7 @@ Route::middleware(['auth'])->group(function () {
 
         // ✅ Neraca Lajur
         Route::get('/neraca-lajur', [NeracaLajurController::class, 'index'])->name('neraca-lajur.index');
+        Route::get('/neraca-lajur/export', [App\Http\Controllers\NeracaLajurController::class, 'export'])->name('neraca-lajur.export');
 
         // ✅ Laporan Keuangan
         Route::get('/laporan-keuangan', [LaporanKeuanganController::class, 'index'])->name('laporan-keuangan');
