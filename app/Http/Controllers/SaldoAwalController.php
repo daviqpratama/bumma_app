@@ -38,7 +38,7 @@ class SaldoAwalController extends Controller
             'kredit' => 'nullable|numeric',
         ]);
 
-        $akun = Akun::findOrFail($request->akuns_id);
+        $akun = Akun::findOrFail($request->akun_id);
 
         $saldoAwal = SaldoAwal::create([
             'akun_id' => $akun->id,
@@ -94,7 +94,7 @@ class SaldoAwalController extends Controller
 
         $saldo = SaldoAwal::findOrFail($id);
         $saldo->update([
-            'akun_id' => $request->akuns_id,
+            'akun_id' => $request->akun_id,
             'debit' => $request->debit ?? 0,
             'kredit' => $request->kredit ?? 0,
         ]);
@@ -107,7 +107,7 @@ class SaldoAwalController extends Controller
         $saldo = SaldoAwal::findOrFail($id);
 
         // Hapus jurnal umum yang terkait dengan saldo awal ini
-        JurnalUmum::where('akun_id', $saldo->akuns_id)
+        JurnalUmum::where('akun_id', $saldo->akun_id)
             ->where('ref', 'Saldo Awal')
             ->delete();
 
