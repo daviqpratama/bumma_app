@@ -5,22 +5,20 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up(): void
-    {
+    public function up(): void {
         Schema::create('transaksis', function (Blueprint $table) {
             $table->id();
+            $table->string('kode_transaksi')->unique();
             $table->date('tanggal');
             $table->string('keterangan');
-            $table->string('akun_debit');
-            $table->decimal('nominal_debit', 15, 2);
-            $table->string('akun_kredit');
-            $table->decimal('nominal_kredit', 15, 2);
+            $table->foreignId('akun_debit')->constrained('akuns')->onDelete('cascade');
+            $table->foreignId('akun_kredit')->constrained('akuns')->onDelete('cascade');
+            $table->decimal('nominal', 20, 2);
             $table->timestamps();
         });
     }
 
-    public function down(): void
-    {
+    public function down(): void {
         Schema::dropIfExists('transaksis');
     }
 };
