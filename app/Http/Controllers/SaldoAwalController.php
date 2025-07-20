@@ -33,7 +33,7 @@ class SaldoAwalController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'akuns_id' => 'required|exists:akuns,id',
+            'akun_id' => 'required|exists:akuns,id',
             'debit' => 'nullable|numeric',
             'kredit' => 'nullable|numeric',
         ]);
@@ -41,7 +41,7 @@ class SaldoAwalController extends Controller
         $akun = Akun::findOrFail($request->akuns_id);
 
         $saldoAwal = SaldoAwal::create([
-            'akuns_id' => $akun->id,
+            'akun_id' => $akun->id,
             'debit' => $request->debit ?? 0,
             'kredit' => $request->kredit ?? 0,
         ]);
@@ -87,14 +87,14 @@ class SaldoAwalController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'akuns_id' => 'required|exists:akuns,id',
+            'akun_id' => 'required|exists:akuns,id',
             'debit' => 'nullable|numeric',
             'kredit' => 'nullable|numeric',
         ]);
 
         $saldo = SaldoAwal::findOrFail($id);
         $saldo->update([
-            'akuns_id' => $request->akuns_id,
+            'akun_id' => $request->akuns_id,
             'debit' => $request->debit ?? 0,
             'kredit' => $request->kredit ?? 0,
         ]);
