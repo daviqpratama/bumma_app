@@ -9,7 +9,7 @@ class SaldoAwal extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['akuns_id', 'debit', 'kredit'];
+    protected $fillable = ['akun_id', 'debit', 'kredit'];
 
     public function akun()
     {
