@@ -41,7 +41,7 @@ Route::middleware(['auth'])->group(function () {
     // ADMIN ROUTES ONLY
     // ---------------------------
     Route::middleware(['role:admin'])->group(function () {
-        // ✅ Saldo Awal
+        //  Saldo Awal
         Route::resource('/saldo-awal', SaldoAwalController::class)->except(['show']);
 
         // ✅ Jurnal Umum
