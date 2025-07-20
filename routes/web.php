@@ -30,9 +30,9 @@ Route::middleware(['auth'])->group(function () {
                 : abort(403, 'Role tidak dikenali.'));
     })->name('dashboard');
 
-    // Dashboard routes
-    Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
+    Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboardTransaksi'])->name('admin.dashboard');
     Route::get('/user/dashboard', [DashboardController::class, 'userDashboard'])->name('user.dashboard');
+
 
     //  Laporan Kinerja
      Route::get('/laporan-kinerja', [LaporanKinerjaController::class, 'index'])->name('laporan.kinerja');
