@@ -68,6 +68,7 @@ class LaporanKinerjaController extends Controller
             'biaya_ekologis' => ($total_pendapatan != 0) ? round(($total_ekologis / $total_pendapatan) * 100, 2) . '%' : 'N/A',
         ];
 
-        return view('laporan-kinerja.index', compact('rasio', 'tahun'));
+        return view('Laporan-kinerja.index', compact('rasio', 'tahun'));
+
     }
 }

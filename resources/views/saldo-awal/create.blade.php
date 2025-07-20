@@ -8,7 +8,7 @@
         @csrf
 
         <div class="mb-3">
-            <label for="akuns_id">Nama Akun</label>
+            <label for="akuns_id" class="form-label">Nama Akun</label>
             <select name="akuns_id" id="akuns_id" class="form-control" required>
                 <option value="">-- Pilih Akun --</option>
                 @foreach ($akuns as $akun)
@@ -18,13 +18,13 @@
         </div>
 
         <div class="mb-3">
-            <label for="debit">Debit</label>
-            <input type="number" name="debit" id="debit" class="form-control" step="0.01">
+            <label for="debit" class="form-label">Debit</label>
+            <input type="number" name="debit" id="debit" class="form-control" step="0.01" min="0">
         </div>
 
         <div class="mb-3">
-            <label for="kredit">Kredit</label>
-            <input type="number" name="kredit" id="kredit" class="form-control" step="0.01">
+            <label for="kredit" class="form-label">Kredit</label>
+            <input type="number" name="kredit" id="kredit" class="form-control" step="0.01" min="0">
         </div>
 
         <button type="submit" class="btn btn-primary">Simpan</button>

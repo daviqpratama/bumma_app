@@ -53,7 +53,7 @@ class SaldoAwalController extends Controller
                 'tanggal'     => now()->toDateString(),
                 'kode_jurnal' => $kodeJurnal,
                 'keterangan'  => 'Saldo Awal - ' . $akun->nama,
-                'akun_id'     => $akun->id,
+                'akuns_id'    => $akun->id,
                 'akun'        => $akun->nama,
                 'posisi'      => 'debit',
                 'nominal'     => $saldoAwal->debit,
@@ -66,7 +66,7 @@ class SaldoAwalController extends Controller
                 'tanggal'     => now()->toDateString(),
                 'kode_jurnal' => $kodeJurnal,
                 'keterangan'  => 'Saldo Awal - ' . $akun->nama,
-                'akun_id'     => $akun->id,
+                'akuns_id'    => $akun->id,
                 'akun'        => $akun->nama,
                 'posisi'      => 'kredit',
                 'nominal'     => $saldoAwal->kredit,
@@ -106,7 +106,7 @@ class SaldoAwalController extends Controller
     {
         $saldo = SaldoAwal::findOrFail($id);
 
-        JurnalUmum::where('akun_id', $saldo->akuns_id)
+        JurnalUmum::where('akuns_id', $saldo->akuns_id)
             ->where('ref', 'Saldo Awal')
             ->delete();
 

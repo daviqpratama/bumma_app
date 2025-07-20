@@ -15,7 +15,6 @@
         </form>
     </div>
 
-
     <form method="GET" action="{{ route('jurnal-penyesuaian.index') }}" class="d-flex gap-2 flex-wrap align-items-center mb-4">
         <select name="bulan" class="form-control" style="max-width: 140px;">
             @for ($i = 1; $i <= 12; $i++)
@@ -34,8 +33,6 @@
         <input type="text" name="nomor_jurnal" class="form-control" placeholder="Nomor Jurnal" value="{{ request('nomor_jurnal') }}" style="max-width: 180px;">
 
         <button type="submit" class="btn btn-success">Tampilkan</button>
-        <a href="{{ route('jurnal-penyesuaian.export.pdf') }}" class="btn btn-outline-danger">Ekspor PDF</a>
-        <a href="{{ route('jurnal-penyesuaian.export.excel') }}" class="btn btn-outline-success">Ekspor Excel</a>
     </form>
 
     <div class="card p-3">
