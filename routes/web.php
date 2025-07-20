@@ -44,7 +44,7 @@ Route::middleware(['auth'])->group(function () {
         //  Saldo Awal
         Route::resource('/saldo-awal', SaldoAwalController::class)->except(['show']);
 
-        // ✅ Jurnal Umum
+        //  Jurnal Umum
         Route::get('/jurnal-umum', [JurnalUmumController::class, 'index'])->name('jurnal-umum.index');
         Route::post('/jurnal-umum', [JurnalUmumController::class, 'store'])->name('jurnal-umum.store');
         Route::get('/jurnal-umum/{id}/edit', [JurnalUmumController::class, 'edit'])->name('jurnal-umum.edit');
