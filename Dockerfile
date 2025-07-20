@@ -34,6 +34,12 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 # Expose port 8000
 EXPOSE 8000
 
+RUN php artisan config:clear && \
+    php artisan cache:clear && \
+    php artisan route:clear && \
+    php artisan view:clear
+
+
 # Start Laravel
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
 
