@@ -106,7 +106,7 @@ class SaldoAwalController extends Controller
     {
         $saldo = SaldoAwal::findOrFail($id);
 
-        JurnalUmum::where('akuns_id', $saldo->akuns_id)
+        JurnalUmum::where('akun_id', $saldo->akun_id)
             ->where('ref', 'Saldo Awal')
             ->delete();
 
