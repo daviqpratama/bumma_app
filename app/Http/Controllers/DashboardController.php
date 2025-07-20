@@ -23,8 +23,13 @@ class DashboardController extends Controller
         $keuntungan = $totalPendapatan - $totalBiaya;
         $jumlahTransaksi = 150;
 
-        // ✅ Ambil pengumuman otomatis dari database
         $pengumuman = Pengumuman::orderBy('tanggal', 'desc')->get();
+
+        // ✅ Tambahkan ini
+        $notifikasiTransaksi = DB::table('transaksis')
+            ->orderBy('tanggal', 'desc')
+            ->limit(5)
+            ->get();
 
         if ($user->role === 'admin') {
             return view('dashboard.admin', compact(
@@ -32,14 +37,16 @@ class DashboardController extends Controller
                 'totalBiaya',
                 'keuntungan',
                 'jumlahTransaksi',
-                'pengumuman' // ✅ tambahan di compact
+                'pengumuman',
+                'notifikasiTransaksi' // ✅ Ditambahkan
             ));
         } elseif ($user->role === 'user') {
-            return view('dashboard.user', compact('pengumuman')); // ✅ juga ke user kalau butuh
+            return view('dashboard.user', compact('pengumuman'));
         } else {
             return view('errors.role-not-found');
         }
     }
+
 
     public function adminDashboard()
     {
