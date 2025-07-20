@@ -34,7 +34,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class, 'adminDashboard'])->name('admin.dashboard');
     Route::get('/user/dashboard', [DashboardController::class, 'userDashboard'])->name('user.dashboard');
 
-    // ✅ Laporan Kinerja
+    //  Laporan Kinerja
      Route::get('/laporan-kinerja', [LaporanKinerjaController::class, 'index'])->name('laporan.kinerja');
 
     // ---------------------------
