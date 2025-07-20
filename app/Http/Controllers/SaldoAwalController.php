@@ -102,11 +102,10 @@ class SaldoAwalController extends Controller
         return redirect()->route('saldo-awal.index')->with('success', 'Data saldo awal berhasil diperbarui!');
     }
 
-        public function destroy($id)
+    public function destroy($id)
     {
         $saldo = SaldoAwal::findOrFail($id);
 
-        // Hapus jurnal umum yang terkait dengan saldo awal ini
         JurnalUmum::where('akun_id', $saldo->akun_id)
             ->where('ref', 'Saldo Awal')
             ->delete();
@@ -115,5 +114,4 @@ class SaldoAwalController extends Controller
 
         return redirect()->route('saldo-awal.index')->with('success', 'Data saldo awal dan jurnal umumnya berhasil dihapus!');
     }
-
 }
