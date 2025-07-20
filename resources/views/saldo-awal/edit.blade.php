@@ -12,7 +12,7 @@
 
         <div class="mb-3">
             <label for="akuns_id">Nama Akun</label>
-            <select name="akun_id" id="akun_id" class="form-control" required>
+            <select name="akuns_id" id="akuns_id" class="form-control" required>
                 <option value="">-- Pilih Akun --</option>
                 @foreach ($akuns as $akun)
                     <option value="{{ $akun->id }}" {{ $akun->id == $editItem->akuns_id ? 'selected' : '' }}>

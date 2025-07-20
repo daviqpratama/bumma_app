@@ -33,15 +33,15 @@ class SaldoAwalController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'akun_id' => 'required|exists:akuns,id',
+            'akuns_id' => 'required|exists:akuns,id',
             'debit' => 'nullable|numeric',
             'kredit' => 'nullable|numeric',
         ]);
 
-        $akun = Akun::findOrFail($request->akun_id);
+        $akun = Akun::findOrFail($request->akuns_id);
 
         $saldoAwal = SaldoAwal::create([
-            'akun_id' => $akun->id,
+            'akuns_id' => $akun->id,
             'debit' => $request->debit ?? 0,
             'kredit' => $request->kredit ?? 0,
         ]);
@@ -87,14 +87,14 @@ class SaldoAwalController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'akun_id' => 'required|exists:akuns,id',
+            'akuns_id' => 'required|exists:akuns,id',
             'debit' => 'nullable|numeric',
             'kredit' => 'nullable|numeric',
         ]);
 
         $saldo = SaldoAwal::findOrFail($id);
         $saldo->update([
-            'akun_id' => $request->akun_id,
+            'akuns_id' => $request->akuns_id,
             'debit' => $request->debit ?? 0,
             'kredit' => $request->kredit ?? 0,
         ]);
@@ -106,7 +106,7 @@ class SaldoAwalController extends Controller
     {
         $saldo = SaldoAwal::findOrFail($id);
 
-        JurnalUmum::where('akun_id', $saldo->akun_id)
+        JurnalUmum::where('akun_id', $saldo->akuns_id)
             ->where('ref', 'Saldo Awal')
             ->delete();
 

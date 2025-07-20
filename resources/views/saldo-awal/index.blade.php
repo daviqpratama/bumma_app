@@ -25,7 +25,7 @@
 
     <h4 class="mt-4">Daftar Saldo Awal</h4>
      <table class="table table-bordered table-striped">
-            <thead class="table-dark">
+        <thead class="table-dark">
             <tr>
                 <th>Akun</th>
                 <th>Debit</th>
